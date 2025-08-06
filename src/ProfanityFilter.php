@@ -4,15 +4,15 @@ namespace ProfanityFilter;
 
 class ProfanityFilter
 {
-    protected array $blacklists = [
-        'low' => ['pute'],
-        'medium' => ['con', 'merde'],
-        'high' => ['punaise', 'fichtre'],
-    ];
+    protected array $blacklists = [];
     protected array $blacklist = [];
 
-    public function __construct(string $level = 'medium')
+    public function __construct(string $level = 'medium', string $jsonPath = __DIR__ . '/../data/blacklist.json')
     {
+        if (file_exists($jsonPath)) {
+            $this->blacklists = json_decode(file_get_contents($jsonPath), true);
+        }
+        
         $this->blacklist = [];
 
         foreach (['low', 'medium', 'high'] as $key) {
