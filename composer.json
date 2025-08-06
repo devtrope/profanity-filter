@@ -1,0 +1,11 @@
+{
+    "name": "devtrope/profanity-filter",
+    "description": "A profanity filter for PHP",
+    "type": "library",
+    "keywords": ["profanity", "filter", "php"],
+    "autoload": {
+        "psr-4": {
+            "ProfanityFilter\\": "src/"
+        }
+    }
+}
