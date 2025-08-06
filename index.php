@@ -4,13 +4,8 @@ require_once 'vendor/autoload.php';
 
 use ProfanityFilter\ProfanityFilter;
 
-$filter = new ProfanityFilter();
-$text = "This is a test with con and pute in it.";
+$filter = new ProfanityFilter('high');
+$text = "This is a test with con and pute in it, and punaise and merde too.";
+$cleanedText = $filter->clean($text);
 
-if ($filter->containsProfanity($text)) {
-    echo "Profanity detected!\n";
-    $cleanedText = $filter->clean($text);
-    echo "Cleaned text: " . $cleanedText . "\n";
-} else {
-    echo "No profanity detected.\n";
-}
+echo $cleanedText;

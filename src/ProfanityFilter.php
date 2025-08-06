@@ -4,14 +4,26 @@ namespace ProfanityFilter;
 
 class ProfanityFilter
 {
+    protected array $blacklists = [
+        'low' => ['pute'],
+        'medium' => ['con', 'merde'],
+        'high' => ['punaise', 'fichtre'],
+    ];
     protected array $blacklist = [];
 
-    public function __construct()
+    public function __construct(string $level = 'medium')
     {
-        $this->blacklist = [
-            'con',
-            'pute'
-        ];
+        $this->blacklist = [];
+
+        foreach (['low', 'medium', 'high'] as $key) {
+            if (array_key_exists($key, $this->blacklists)) {
+                $this->blacklist = array_merge($this->blacklist, $this->blacklists[$key]);
+            }
+            
+            if ($key === $level) {
+                break;
+            }
+        }
     }
 
     public function containsProfanity(string $text): bool
