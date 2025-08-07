@@ -14,5 +14,13 @@
     "require-dev": {
         "phpstan/phpstan": "^2.1",
         "squizlabs/php_codesniffer": "^3.13"
-    }
+    },
+    "authors": [
+        {
+            "name": "Quentin SCHIFFERLE",
+            "email": "dev.trope@gmail.com"
+        }
+    ],
+    "minimum-stability": "stable",
+    "prefer-stable": true
 }
