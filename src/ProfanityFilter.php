@@ -39,34 +39,32 @@ class ProfanityFilter
      *
      * @param ProfanityLevel $level
      * @param string|null $language
+     * @param string|null $customBlacklistPath
      * @throws \RuntimeException
      */
     public function __construct(
         ProfanityLevel $level = ProfanityLevel::MEDIUM,
-        ?string $language = null
+        ?string $language = null,
+        ?string $customBlacklistPath = null
     ) {
         $locale = $this->getLocale($language);
+        $jsonPath = $this->getBlacklistFile($customBlacklistPath, $locale);
+        $content = file_get_contents($jsonPath);
 
-        $jsonPath = __DIR__ . '/../data/blacklist.' . $locale . '.json';
-
-        if (file_exists($jsonPath)) {
-            $content = file_get_contents($jsonPath);
-
-            if (! $content) {
-                throw new \RuntimeException("Failed to read the blacklist file: $jsonPath");
-            }
-
-            $jsonContent = json_decode($content, true);
-
-            if (! is_array($jsonContent)) {
-                throw new \RuntimeException("Invalid JSON format in the blacklist file: $jsonPath");
-            }
-
-            /**
-             * @var array<string, string[]> $jsonContent
-             */
-            $this->blacklists = $jsonContent;
+        if (! $content) {
+            throw new \RuntimeException("Failed to read the blacklist file: $jsonPath");
         }
+
+        $jsonContent = json_decode($content, true);
+
+        if (! is_array($jsonContent)) {
+            throw new \RuntimeException("Invalid JSON format in the blacklist file: $jsonPath");
+        }
+
+        /**
+         * @var array<string, string[]> $jsonContent
+         */
+        $this->blacklists = $jsonContent;
 
         $this->blacklist = [];
 
@@ -184,5 +182,26 @@ class ProfanityFilter
         }
 
         return self::DEFAULT_LOCALE;
+    }
+
+    /**
+     * Returns the path to the blacklist file.
+     *
+     * @param string|null $customBlacklistPath
+     * @param string|null $locale
+     * @return string
+     * @throws \RuntimeException
+     */
+    private function getBlacklistFile(?string $customBlacklistPath, ?string $locale): string
+    {
+        if ($customBlacklistPath !== null) {
+            if (! file_exists($customBlacklistPath)) {
+                throw new \RuntimeException("Custom blacklist file does not exist: $customBlacklistPath");
+            }
+
+            return $customBlacklistPath;
+        }
+
+        return __DIR__ . '/../data/blacklist.' . $locale . '.json';
     }
 }

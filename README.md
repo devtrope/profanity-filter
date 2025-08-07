@@ -13,6 +13,7 @@ Includes multiple sensitivity levels, support for custom word lists, and is PSR-
 
 - Detects offensive words in strings
 - Supports multiple filtering levels: `low`, `medium`, `high`
+- Supports multiple languages (en, fr)
 - Custom blacklist support via JSON file
 - Add or remove words dynamically at runtime
 - Fully typed and ready for static analysis
@@ -30,27 +31,34 @@ composer require devtrope/profanity-filter
 
 ---
 
-## Basic Usage
+## Usage
+
+### Basic usage
 
 ```php
 use ProfanityFilter\ProfanityFilter;
 use ProfanityFilter\ProfanityLevel;
 
-$filter = new ProfanityFilter(ProfanityLevel::MEDIUM);
-
+$filter = new ProfanityFilter();
 $text = "You little piece of shit!";
-$isProfane = $filter->containsProfanity($text); // true
-
-$cleaned = $filter->clean($text); // You little piece of ****!
+echo $filter->clean($text); // You little piece of ****!
 ```
 
----
+### With a specific language
 
-## Customization
+```php
+$filter = new ProfanityFilter(ProfanityLevel::HIGH, 'fr');
+```
 
-### Load a custom JSON blacklist
+### With a custom blacklist
 
-You can provide your own JSON file with a structure like this:
+```php
+$filter = new ProfanityFilter(
+    ProfanityLevel::HIGH,
+    'fr',
+    __DIR__ . '/my-custom-blacklist.json'
+);
+```
 
 ```json
 {
@@ -60,10 +68,6 @@ You can provide your own JSON file with a structure like this:
 }
 ```
 
-```php
-$filter = new ProfanityFilter(ProfanityLevel::HIGH, __DIR__ . '/my_blacklist.json');
-```
-
 ### Add or remove words at runtime
 
 ```php
@@ -71,8 +75,37 @@ $filter->addWord('uglyword');
 $filter->removeWord('otheruglyword');
 ```
 
+### Check if a text contains profanity
+
+```php
+if ($filter->containsProfanity($text)) {
+    echo "Inappropriate content detected!";
+}
+```
+
 ---
 
-## 📄 License
+## Language support
+
+Currently supported locales:
+
+- `en` - English
+- `fr` - Français
+
+---
+
+## Profanity levels
+
+Each level includes all words from the previous level:
+
+| Level    | Description                 |
+| -------- | --------------------------- |
+| LOW      | Mild profanity              |
+| MEDIUM   | Default, balanced           |
+| HIGH     | Agressive filtering         |
+
+---
+
+## License
 
 MIT License - see [LICENSE](LICENSE.md) for details.
