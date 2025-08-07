@@ -8,7 +8,7 @@ namespace ProfanityFilter;
  * Filters profanity from text using a customizable blacklist.
  *
  * @package ProfanityFilter
- * @version 0.0.1
+ * @version 0.0.4
  * @author Quentin SCHIFFERLE <dev.trope@gmail.com>
  * @license MIT
  */
@@ -47,6 +47,10 @@ class ProfanityFilter
         ?string $language = null,
         ?string $customBlacklistPath = null
     ) {
+        if (! function_exists('mb_strlen')) {
+            throw new \RuntimeException('The mbstring extension is required for this class to work.');
+        }
+        
         $locale = $this->getLocale($language);
         $jsonPath = $this->getBlacklistFile($customBlacklistPath, $locale);
         $content = file_get_contents($jsonPath);
@@ -136,11 +140,11 @@ class ProfanityFilter
     public function clean(?string $text, string $replacement = '*'): string|null
     {
         foreach ($this->blacklist as $word) {
-            $text = preg_replace(
-                '/\b' . preg_quote($word, '/') . '\b/i',
-                str_repeat($replacement, strlen($word)),
-                (string) $text
-            );
+            $pattern = '/' . preg_quote($word, '/') . '/iu';
+
+            $text = preg_replace_callback($pattern, function ($matches) use ($replacement) {
+                return str_repeat($replacement, \mb_strlen($matches[0], 'UTF-8'));
+            }, (string) $text);
         }
 
         return $text;

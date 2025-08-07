@@ -3,9 +3,13 @@
 A lightweight and customizable PHP package for detecting and censoring profanity in text.  
 Includes multiple sensitivity levels, support for custom word lists, and is PSR-12 and PHPStan compatible.
 
+[![Latest Stable Version](https://img.shields.io/packagist/v/devtrope/profanity-filter.svg)](https://packagist.org/packages/devtrope/profanity-filter)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Static Analysis: PHPStan](https://img.shields.io/badge/static%20analysis-phpstan-blue)](https://phpstan.org)
 [![Code Style: PSR-12](https://img.shields.io/badge/code%20style-PSR--12-lightgrey.svg)](https://www.php-fig.org/psr/psr-12/)
+[![Downloads](https://img.shields.io/packagist/dt/devtrope/profanity-filter.svg)](https://packagist.org/packages/devtrope/profanity-filter)
+[![PHP Version](https://img.shields.io/packagist/php-v/devtrope/profanity-filter.svg)](https://packagist.org/packages/devtrope/profanity-filter)
+
 
 ---
 
