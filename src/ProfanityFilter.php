@@ -7,7 +7,7 @@ class ProfanityFilter
     protected array $blacklists = [];
     protected array $blacklist = [];
 
-    public function __construct(string $level = 'medium', string $jsonPath = __DIR__ . '/../data/blacklist.json')
+    public function __construct(string $level = ProfanityLevel::MEDIUM, string $jsonPath = __DIR__ . '/../data/blacklist.json')
     {
         if (file_exists($jsonPath)) {
             $this->blacklists = json_decode(file_get_contents($jsonPath), true);
@@ -15,12 +15,14 @@ class ProfanityFilter
         
         $this->blacklist = [];
 
-        foreach (['low', 'medium', 'high'] as $key) {
-            if (array_key_exists($key, $this->blacklists)) {
-                $this->blacklist = array_merge($this->blacklist, $this->blacklists[$key]);
+        foreach (ProfanityLevel::cases() as $key) {
+            $keyName = strtolower($key->name);
+
+            if (array_key_exists($keyName, $this->blacklists)) {
+                $this->blacklist = array_merge($this->blacklist, $this->blacklists[$keyName]);
             }
             
-            if ($key === $level) {
+            if ($keyName === $level) {
                 break;
             }
         }
