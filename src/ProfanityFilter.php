@@ -25,9 +25,22 @@ class ProfanityFilter
     protected array $blacklist = [];
 
     public function __construct(
-        ProfanityLevel $level = ProfanityLevel::MEDIUM,
-        string $jsonPath = __DIR__ . '/../data/blacklist.json'
+        ProfanityLevel $level = ProfanityLevel::MEDIUM
     ) {
+        $locale = 'en';
+
+        if (function_exists('locale_get_default')) {
+            $locale = \Locale::getDefault();
+
+            if (! $locale) {
+                throw new \RuntimeException('Failed to get the default locale.');
+            }
+
+            $locale = substr($locale, 0, 2); // Get the first two characters for language code
+        }
+
+        $jsonPath = __DIR__ . '/../data/blacklist.' . $locale . '.json';
+
         if (file_exists($jsonPath)) {
             $content = file_get_contents($jsonPath);
 
