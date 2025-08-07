@@ -6,7 +6,7 @@ use ProfanityFilter\ProfanityFilter;
 use ProfanityFilter\ProfanityLevel;
 
 $filter = new ProfanityFilter(ProfanityLevel::LOW);
-$text = "This is a test with con and pute in it, and punaise and merde too.";
+$text = "T'es vraiment un fils de pute putain de merde.";
 $cleanedText = $filter->clean($text);
 
 echo $cleanedText;

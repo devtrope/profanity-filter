@@ -1,5 +1,33 @@
 {
-    "low": ["pute"],
-    "medium": ["con", "merde"],
-    "high": ["punaise", "fichtre"]
+  "low": [
+    "pute",
+    "enculé",
+    "salope",
+    "bordel",
+    "putain"
+  ],
+  "medium": [
+    "con",
+    "conne",
+    "connard",
+    "connasse",
+    "merde",
+    "chiant",
+    "chier",
+    "nique",
+    "emmerde",
+    "enculeur",
+    "cul",
+    "salopard"
+  ],
+  "high": [
+    "zut",
+    "punaise",
+    "fichtre",
+    "mince",
+    "flûte",
+    "saperlipopette",
+    "purée",
+    "crotte"
+  ]
 }

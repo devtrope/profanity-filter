@@ -4,13 +4,35 @@ namespace ProfanityFilter;
 
 class ProfanityFilter
 {
+    /**
+     * @var array<string, string[]>
+     */
     protected array $blacklists = [];
+
+    /**
+     * @var string[]
+     */
     protected array $blacklist = [];
 
     public function __construct(ProfanityLevel $level = ProfanityLevel::MEDIUM, string $jsonPath = __DIR__ . '/../data/blacklist.json')
     {
         if (file_exists($jsonPath)) {
-            $this->blacklists = json_decode(file_get_contents($jsonPath), true);
+            $content = file_get_contents($jsonPath);
+
+            if (! $content) {
+                throw new \RuntimeException("Failed to read the blacklist file: $jsonPath");
+            }
+
+            $jsonContent = json_decode($content, true);
+
+            if (! is_array($jsonContent)) {
+                throw new \RuntimeException("Invalid JSON format in the blacklist file: $jsonPath");
+            }
+
+            /** 
+             * @var array<string, string[]> $jsonContent
+             */
+            $this->blacklists = $jsonContent;
         }
         
         $this->blacklist = [];
@@ -42,8 +64,12 @@ class ProfanityFilter
         });
     }
 
-    public function containsProfanity(string $text): bool
+    public function containsProfanity(?string $text): bool
     {
+        if ($text === null) {
+            return false;
+        }
+
         foreach ($this->blacklist as $word) {
             if (stripos($text, $word) !== false) {
                 return true;
@@ -53,10 +79,14 @@ class ProfanityFilter
         return false;
     }
 
-    public function clean(string $text, string $replacement = '*'): string
+    public function clean(?string $text, string $replacement = '*'): string|null
     {
         foreach ($this->blacklist as $word) {
-            $text = preg_replace('/\b' . preg_quote($word, '/') . '\b/i', str_repeat($replacement, strlen($word)), $text);
+            $text = preg_replace(
+                '/\b' . preg_quote($word, '/') . '\b/i',
+                str_repeat($replacement, strlen($word)),
+                (string) $text
+            );
         }
 
         return $text;
