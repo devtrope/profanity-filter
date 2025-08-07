@@ -26,6 +26,20 @@ class ProfanityFilter
         }
     }
 
+    public function addWord(string $word): void
+    {
+        if (! in_array($word, $this->blacklist, true)) {
+            $this->blacklist[] = $word;
+        }
+    }
+
+    public function removeWord(string $word): void
+    {
+        $this->blacklist = array_filter($this->blacklist, function ($w) use ($word) {
+            return $w !== $word;
+        });
+    }
+
     public function containsProfanity(string $text): bool
     {
         foreach ($this->blacklist as $word) {
