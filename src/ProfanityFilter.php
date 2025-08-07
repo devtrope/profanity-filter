@@ -24,20 +24,28 @@ class ProfanityFilter
      */
     protected array $blacklist = [];
 
+    /**
+     * @var string
+     */
+    private const DEFAULT_LOCALE = 'en';
+
+    /**
+     * @var string[]
+     */
+    private array $supportedLocales = ['en', 'fr'];
+
+    /**
+     * ProfanityFilter constructor.
+     *
+     * @param ProfanityLevel $level
+     * @param string|null $language
+     * @throws \RuntimeException
+     */
     public function __construct(
-        ProfanityLevel $level = ProfanityLevel::MEDIUM
+        ProfanityLevel $level = ProfanityLevel::MEDIUM,
+        ?string $language = null
     ) {
-        $locale = 'en';
-
-        if (function_exists('locale_get_default')) {
-            $locale = \Locale::getDefault();
-
-            if (! $locale) {
-                throw new \RuntimeException('Failed to get the default locale.');
-            }
-
-            $locale = substr($locale, 0, 2); // Get the first two characters for language code
-        }
+        $locale = $this->getLocale($language);
 
         $jsonPath = __DIR__ . '/../data/blacklist.' . $locale . '.json';
 
@@ -138,5 +146,43 @@ class ProfanityFilter
         }
 
         return $text;
+    }
+
+    /**
+     * Returns the locale used for the blacklist.
+     *
+     * @param string|null $language
+     * @return string
+     * @throws \RuntimeException
+     */
+    private function getLocale(?string $language = null): string
+    {
+        if ($language !== null) {
+            $locale = strtolower($language);
+
+            if (! in_array($locale, $this->supportedLocales, true)) {
+                throw new \RuntimeException("Unsupported language: $language");
+            }
+
+            return $locale;
+        }
+
+        if (function_exists('locale_get_default')) {
+            $locale = \Locale::getDefault();
+
+            if (! $locale) {
+                throw new \RuntimeException('Failed to get the default locale.');
+            }
+
+            $locale = substr($locale, 0, 2); // Get the first two characters for language code
+
+            if (! in_array($locale, $this->supportedLocales, true)) {
+                throw new \RuntimeException("Unsupported locale: $locale");
+            }
+
+            return $locale;
+        }
+
+        return self::DEFAULT_LOCALE;
     }
 }
