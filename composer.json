@@ -3,6 +3,7 @@
     "description": "A profanity filter for PHP",
     "type": "library",
     "keywords": ["profanity", "filter", "php"],
+    "license": "MIT",
     "autoload": {
         "psr-4": {
             "ProfanityFilter\\": "src/"

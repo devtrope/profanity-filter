@@ -35,6 +35,11 @@ class ProfanityFilter
     private array $supportedLocales = ['en', 'fr'];
 
     /**
+     * @var string
+     */
+    protected string $defaultReplacement = '*';
+
+    /**
      * ProfanityFilter constructor.
      *
      * @param ProfanityLevel $level
@@ -50,7 +55,7 @@ class ProfanityFilter
         if (! function_exists('mb_strlen')) {
             throw new \RuntimeException('The mbstring extension is required for this class to work.');
         }
-        
+
         $locale = $this->getLocale($language);
         $jsonPath = $this->getBlacklistFile($customBlacklistPath, $locale);
         $content = file_get_contents($jsonPath);
@@ -137,17 +142,29 @@ class ProfanityFilter
      * @param string $replacement
      * @return string|null
      */
-    public function clean(?string $text, string $replacement = '*'): string|null
+    public function clean(?string $text, ?string $replacement = null): string|null
     {
+        $replacement = $replacement ?? $this->defaultReplacement;
+        
         foreach ($this->blacklist as $word) {
             $pattern = '/' . preg_quote($word, '/') . '/iu';
 
             $text = preg_replace_callback($pattern, function ($matches) use ($replacement) {
-                return str_repeat($replacement, \mb_strlen($matches[0], 'UTF-8'));
+                return str_repeat($replacement, mb_strlen($matches[0], 'UTF-8'));
             }, (string) $text);
         }
 
         return $text;
+    }
+
+    /**
+     * Sets the default replacement character for profanity.
+     *
+     * @param string $replacement
+     */
+    public function setDefaultReplacement(string $replacement): void
+    {
+        $this->defaultReplacement = $replacement;
     }
 
     /**
