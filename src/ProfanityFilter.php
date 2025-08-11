@@ -2,6 +2,7 @@
 
 namespace ProfanityFilter;
 
+use ProfanityFilter\Configuration\FilterConfig;
 use ProfanityFilter\Configuration\FilterLevel;
 use ProfanityFilter\Core\FilterBuilder;
 
@@ -45,18 +46,18 @@ class ProfanityFilter
     /**
      * ProfanityFilter constructor.
      *
-     * @param array $config
+     * @param FilterConfig $config
      * @throws \RuntimeException
      */
     public function __construct(
-        array $config = []
+        FilterConfig $config
     ) {
         if (! function_exists('mb_strlen')) {
             throw new \RuntimeException('The mbstring extension is required for this class to work.');
         }
 
-        $locale = $this->getLocale($config['language']);
-        $jsonPath = $this->getBlacklistFile($config['customBlacklistPath'], $locale);
+        $locale = $this->getLocale('fr');
+        $jsonPath = $this->getBlacklistFile(null, $locale);
         $content = file_get_contents($jsonPath);
 
         if (! $content) {
@@ -83,7 +84,7 @@ class ProfanityFilter
                 $this->blacklist = array_merge($this->blacklist, $this->blacklists[$keyName]);
             }
 
-            if ($keyName === strtolower($config['level']->name)) {
+            if ($keyName === strtolower($config->level()->name)) {
                 break;
             }
         }
