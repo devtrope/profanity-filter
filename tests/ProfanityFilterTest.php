@@ -11,17 +11,30 @@ final class ProfanityFilterTest extends TestCase
     public function testClean()
     {
         $filter = ProfanityFilter::create()->build();
+        $text = "This is a test string with shit.";
+        $cleanedText = $filter->clean($text);
+
+        $this->assertEquals("This is a test string with ****.", $cleanedText);
+    }
+    public function testCleanLow()
+    {
+        $filter = ProfanityFilter::create()
+            ->level(FilterLevel::LOW)
+            ->build();
+        $text = "This is a test string with shit.";
+        $cleanedText = $filter->clean($text);
+
+        $this->assertEquals("This is a test string with shit.", $cleanedText);
+    }
+
+    public function testCleanFR()
+    {
+        $filter = ProfanityFilter::create()
+            ->language('fr')
+            ->build();
         $text = "This is a test string with chiant.";
         $cleanedText = $filter->clean($text);
 
         $this->assertEquals("This is a test string with ******.", $cleanedText);
-    }
-    public function testCleanLow()
-    {
-        $filter = ProfanityFilter::create()->level(FilterLevel::LOW)->build();
-        $text = "This is a test string with chiant.";
-        $cleanedText = $filter->clean($text);
-
-        $this->assertEquals("This is a test string with chiant.", $cleanedText);
     }
 }

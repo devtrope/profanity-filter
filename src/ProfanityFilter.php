@@ -56,7 +56,7 @@ class ProfanityFilter
             throw new \RuntimeException('The mbstring extension is required for this class to work.');
         }
 
-        $locale = $this->getLocale('fr');
+        $locale = $this->getLocale($config->language());
         $jsonPath = $this->getBlacklistFile(null, $locale);
         $content = file_get_contents($jsonPath);
 

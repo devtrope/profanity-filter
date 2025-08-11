@@ -14,10 +14,16 @@ class FilterBuilder
     {
         $this->config = new FilterConfig();
     }
-    
+
     public function level(FilterLevel $level): self
     {
         $this->config->setLevel($level);
+        return $this;
+    }
+
+    public function language(string $language): self
+    {
+        $this->config->setLanguage($language);
         return $this;
     }
 
