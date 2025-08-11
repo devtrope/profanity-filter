@@ -8,7 +8,7 @@ final class ProfanityFilterTest extends TestCase
 {
     public function testClean()
     {
-        $filter = new ProfanityFilter(ProfanityLevel::MEDIUM, 'fr');
+        $filter = ProfanityFilter::create()->build();
         $text = "This is a test string with putain.";
         $cleanedText = $filter->clean($text);
 

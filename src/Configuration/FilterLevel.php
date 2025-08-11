@@ -1,6 +1,6 @@
 <?php
 
-namespace ProfanityFilter;
+namespace ProfanityFilter\Configuration;
 
 /*
  * Enum ProfanityLevel
@@ -12,7 +12,7 @@ namespace ProfanityFilter;
  * @author Quentin SCHIFFERLE <dev.trope@gmail.com>
  * @license MIT
  */
-enum ProfanityLevel
+enum FilterLevel
 {
     case LOW;
     case MEDIUM;

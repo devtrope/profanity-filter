@@ -2,6 +2,9 @@
 
 namespace ProfanityFilter;
 
+use ProfanityFilter\Configuration\FilterLevel;
+use ProfanityFilter\Core\FilterBuilder;
+
 /*
  * Class ProfanityFilter
  *
@@ -42,22 +45,18 @@ class ProfanityFilter
     /**
      * ProfanityFilter constructor.
      *
-     * @param ProfanityLevel $level
-     * @param string|null $language
-     * @param string|null $customBlacklistPath
+     * @param array $config
      * @throws \RuntimeException
      */
     public function __construct(
-        ProfanityLevel $level = ProfanityLevel::MEDIUM,
-        ?string $language = null,
-        ?string $customBlacklistPath = null
+        array $config = []
     ) {
         if (! function_exists('mb_strlen')) {
             throw new \RuntimeException('The mbstring extension is required for this class to work.');
         }
 
-        $locale = $this->getLocale($language);
-        $jsonPath = $this->getBlacklistFile($customBlacklistPath, $locale);
+        $locale = $this->getLocale($config['language']);
+        $jsonPath = $this->getBlacklistFile($config['customBlacklistPath'], $locale);
         $content = file_get_contents($jsonPath);
 
         if (! $content) {
@@ -77,17 +76,22 @@ class ProfanityFilter
 
         $this->blacklist = [];
 
-        foreach (ProfanityLevel::cases() as $key) {
+        foreach (FilterLevel::cases() as $key) {
             $keyName = strtolower($key->name);
 
             if (array_key_exists($keyName, $this->blacklists)) {
                 $this->blacklist = array_merge($this->blacklist, $this->blacklists[$keyName]);
             }
 
-            if ($keyName === strtolower($level->name)) {
+            if ($keyName === strtolower($config['level']->name)) {
                 break;
             }
         }
+    }
+
+    public static function create(): FilterBuilder
+    {
+        return new FilterBuilder();
     }
 
     /**
