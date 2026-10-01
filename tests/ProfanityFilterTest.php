@@ -76,6 +76,12 @@ final class ProfanityFilterTest extends TestCase
         $this->assertSame('This **** is funny', $this->filter->clean($text));
     }
 
+    public function testCanCleanBadWordsWithRepeatedLetters(): void
+    {
+        $text = "This shiiiiiit is funny";
+        $this->assertSame('This **** is funny', $this->filter->clean($text));
+    }
+
     public function testReturnsBadWords(): void
     {
         $text = "This shit is funny as fuck";

@@ -6,9 +6,9 @@ namespace ProfanityFilter;
 
 final class ProfanityFilter
 {
-    private const PROFANITIES = ['shit', 'ass', 'fuck'];
-    private const DEFAULT_REPLACEMENT = '*';
-    private const LEETSPEAK = [
+    private const array PROFANITIES = ['shit', 'ass', 'fuck'];
+    private const string DEFAULT_REPLACEMENT = '*';
+    private const array LEETSPEAK = [
         '4' => 'A',
         '@' => 'A',
         '8' => 'B',
@@ -73,17 +73,17 @@ final class ProfanityFilter
 
     private function normalize(string $word): string
     {
+        $word = $this->removeRepeatedLetters($word);
         $excluded = ['.', '_', '*', '-', '/', '\\'];
         foreach ($excluded as $item) {
             if (false !== mb_stripos($word, $item)) {
                 $word = str_ireplace($item, '', $word);
             }
         }
-
-        return mb_strtolower($this->leetSpeakInverter($word));
+        return mb_strtolower($this->leetspeakInverter($word));
     }
 
-    private function leetSpeakInverter(string $word): string
+    private function leetspeakInverter(string $word): string
     {
         $purified = '';
         foreach (mb_str_split($word) as $letter) {
@@ -93,5 +93,44 @@ final class ProfanityFilter
             $purified .= $letter;
         }
         return $purified;
+    }
+
+    private function removeRepeatedLetters(string $word): string
+    {
+        if (false === $this->hasRepeatedLetters($word)) {
+            return $word;
+        }
+        
+        $purified = '';
+        $lastLetters = [];
+        foreach (mb_str_split($word) as $letter) {
+            if (2 === \count($lastLetters)) {
+                if (end($lastLetters) === $letter) {
+                    continue;
+                }
+                array_shift($lastLetters);
+            }
+            $lastLetters[] = $letter;
+            $purified .= $letter;
+        }
+        return $purified;
+    }
+
+    /**
+     * Determine if the provided word seems to have repeated letters
+     *
+     * @param string $word
+     * @return bool
+     */
+    private function hasRepeatedLetters(string $word): bool
+    {
+        $split = mb_str_split($word);
+        $countedValues = array_count_values($split);
+        foreach ($countedValues as $value) {
+            if (3 <= $value) {
+                return true;
+            }
+        }
+        return false;
     }
 }
