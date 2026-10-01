@@ -35,6 +35,12 @@ final class ProfanityFilterTest extends TestCase
         $this->assertSame('**** happens', $this->filter->clean($text));
     }
 
+    public function testDoesNotCensorWordsInAnotherWord(): void
+    {
+        $text = "This is a class";
+        $this->assertSame('This is a class', $this->filter->clean($text));
+    }
+
     public function testCanSpotBadWords(): void
     {
         $text = "This shit is funny";
@@ -45,6 +51,12 @@ final class ProfanityFilterTest extends TestCase
     {
         $text = "Shit happens";
         $this->assertTrue($this->filter->containsProfanity($text));
+    }
+
+    public function testDoesNotSpotBadWordInAnotherWord(): void
+    {
+        $text = "This is a class";
+        $this->assertFalse($this->filter->containsProfanity($text));
     }
 
     public function testCustomReplacement(): void
