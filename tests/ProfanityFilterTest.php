@@ -105,5 +105,23 @@ final class ProfanityFilterTest extends TestCase
         $text = "This shit is funny, shit";
         $this->assertSame(['shit'], $this->filter->getMatches($text));
     }
+
+    public function testCleansWordsInASentenceWithANewLine(): void
+    {
+        $text = "This shit\n is funny";
+        $this->assertSame('This **** is funny', $this->filter->clean($text));
+    }
+
+    public function testSpotsWordsInASentenceWithANewLine(): void
+    {
+        $text = "This shit\n is funny";
+        $this->assertTrue($this->filter->containsProfanity($text));
+    }
+
+    public function testReturnsWordsInASentenceWithANewLine(): void
+    {
+        $text = "This shit\n is funny";
+        $this->assertSame(['shit'], $this->filter->getMatches($text));
+    }
 }
 
