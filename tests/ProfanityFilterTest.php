@@ -70,6 +70,12 @@ final class ProfanityFilterTest extends TestCase
         $this->assertSame('This **** is funny', $this->filter->clean($text));
     }
 
+    public function testCanReplaceLeetSpeakWords(): void
+    {
+        $text = "This sh1t is funny";
+        $this->assertSame('This **** is funny', $this->filter->clean($text));
+    }
+
     public function testReturnsBadWords(): void
     {
         $text = "This shit is funny as fuck";

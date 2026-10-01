@@ -8,6 +8,23 @@ final class ProfanityFilter
 {
     private const PROFANITIES = ['shit', 'ass', 'fuck'];
     private const DEFAULT_REPLACEMENT = '*';
+    private const LEETSPEAK = [
+        '4' => 'A',
+        '@' => 'A',
+        '8' => 'B',
+        '|3' => 'B',
+        '3' => 'E',
+        '6' => 'G',
+        '9' => 'G',
+        '1' => 'I',
+        '|' => 'I',
+        '0' => 'O',
+        '5' => 'S',
+        '$' => 'S',
+        '7' => 'T',
+        '+' => 'T',
+        '2' => 'Z'
+    ];
 
     public function __construct()
     {}
@@ -62,6 +79,19 @@ final class ProfanityFilter
                 $word = str_ireplace($item, '', $word);
             }
         }
-        return mb_strtolower($word);
+
+        return mb_strtolower($this->leetSpeakInverter($word));
+    }
+
+    private function leetSpeakInverter(string $word): string
+    {
+        $purified = '';
+        foreach (mb_str_split($word) as $letter) {
+            if (isset(self::LEETSPEAK[$letter])) {
+                $letter = self::LEETSPEAK[$letter];
+            }
+            $purified .= $letter;
+        }
+        return $purified;
     }
 }
