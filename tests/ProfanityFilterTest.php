@@ -14,7 +14,7 @@ final class ProfanityFilterTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->filter = new ProfanityFilter(new FilterConfig());
+        $this->filter = new ProfanityFilter();
     }
 
     public function testCanFilterBadWords(): void
