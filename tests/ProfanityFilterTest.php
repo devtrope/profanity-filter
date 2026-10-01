@@ -70,7 +70,7 @@ final class ProfanityFilterTest extends TestCase
         $this->assertSame('This **** is funny', $this->filter->clean($text));
     }
 
-    public function testCanReplaceLeetSpeakWords(): void
+    public function testCanReplaceLeetspeakWords(): void
     {
         $text = "This sh1t is funny";
         $this->assertSame('This **** is funny', $this->filter->clean($text));
@@ -79,6 +79,18 @@ final class ProfanityFilterTest extends TestCase
     public function testCanCleanBadWordsWithRepeatedLetters(): void
     {
         $text = "This shiiiiiit is funny";
+        $this->assertSame('This **** is funny', $this->filter->clean($text));
+    }
+
+    public function testCanCleanBadWordsWithRepeatedLettersAndUpperAndLowercase(): void
+    {
+        $text = "This sHiiIiIiT is funny";
+        $this->assertSame('This **** is funny', $this->filter->clean($text));
+    }
+
+    public function testCanCleanBadWordsWithRepeatedLettersAndLeetspeak(): void
+    {
+        $text = "This shii111t is funny";
         $this->assertSame('This **** is funny', $this->filter->clean($text));
     }
 

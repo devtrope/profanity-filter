@@ -73,6 +73,7 @@ final class ProfanityFilter
 
     private function normalize(string $word): string
     {
+        $word = $this->leetspeakInverter($word);
         $word = $this->removeRepeatedLetters($word);
         $excluded = ['.', '_', '*', '-', '/', '\\'];
         foreach ($excluded as $item) {
@@ -80,7 +81,7 @@ final class ProfanityFilter
                 $word = str_ireplace($item, '', $word);
             }
         }
-        return mb_strtolower($this->leetspeakInverter($word));
+        return mb_strtolower($word);
     }
 
     private function leetspeakInverter(string $word): string
@@ -103,7 +104,7 @@ final class ProfanityFilter
         
         $purified = '';
         $lastLetters = [];
-        foreach (mb_str_split($word) as $letter) {
+        foreach (mb_str_split(mb_strtolower($word)) as $letter) {
             if (2 === \count($lastLetters)) {
                 if (end($lastLetters) === $letter) {
                     continue;
@@ -124,7 +125,7 @@ final class ProfanityFilter
      */
     private function hasRepeatedLetters(string $word): bool
     {
-        $split = mb_str_split($word);
+        $split = mb_str_split(mb_strtolower($word));
         $countedValues = array_count_values($split);
         foreach ($countedValues as $value) {
             if (3 <= $value) {
