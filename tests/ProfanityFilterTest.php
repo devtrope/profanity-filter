@@ -1,40 +1,38 @@
 <?php
 
-use PHPUnit\Framework\Attributes\CoversMethod;
+declare(strict_types=1);
+
+namespace Tests;
+
 use PHPUnit\Framework\TestCase;
-use ProfanityFilter\Configuration\FilterLevel;
+use ProfanityFilter\Configuration\FilterConfig;
 use ProfanityFilter\ProfanityFilter;
 
-#[CoversMethod(ProfanityFilter::class, 'clean')]
 final class ProfanityFilterTest extends TestCase
 {
-    public function testClean()
-    {
-        $filter = ProfanityFilter::create()->build();
-        $text = "This is a test string with shit.";
-        $cleanedText = $filter->clean($text);
+    private ProfanityFilter $filter;
 
-        $this->assertEquals("This is a test string with ****.", $cleanedText);
-    }
-    public function testCleanLow()
+    protected function setUp(): void
     {
-        $filter = ProfanityFilter::create()
-            ->level(FilterLevel::LOW)
-            ->build();
-        $text = "This is a test string with shit.";
-        $cleanedText = $filter->clean($text);
-
-        $this->assertEquals("This is a test string with shit.", $cleanedText);
+        $this->filter = new ProfanityFilter(new FilterConfig());
     }
 
-    public function testCleanFR()
+    public function testCanFilterBadWords(): void
     {
-        $filter = ProfanityFilter::create()
-            ->language('fr')
-            ->build();
-        $text = "This is a test string with chiant.";
-        $cleanedText = $filter->clean($text);
+        $text = "This shit is funny";
+        $this->assertSame('This **** is funny', $this->filter->clean($text));
+    }
 
-        $this->assertEquals("This is a test string with ******.", $cleanedText);
+    public function testCanSpotBadWords(): void
+    {
+        $text = "This shit is funny";
+        $this->assertTrue($this->filter->containsProfanity($text));
+    }
+
+    public function testCustomReplacement(): void
+    {
+        $text = "This shit is funny";
+        $this->assertSame('This #### is funny', $this->filter->clean($text, '#'));
     }
 }
+
