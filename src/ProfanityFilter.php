@@ -6,7 +6,7 @@ namespace ProfanityFilter;
 
 final class ProfanityFilter
 {
-    private const PROFANITIES = ['shit', 'ass'];
+    private const PROFANITIES = ['shit', 'ass', 'fuck'];
     private const DEFAULT_REPLACEMENT = '*';
 
     public function __construct()
@@ -39,8 +39,18 @@ final class ProfanityFilter
         return false;
     }
 
-    public function getMatches(): array
+    public function getMatches(string $content): array
     {
-        return [];
+        $matches = [];
+        foreach (self::PROFANITIES as $profanity) {
+            foreach (explode(' ', $content) as $word) {
+                if (mb_strtolower($word) === $profanity) {
+                    if (false === \in_array($profanity, $matches)) {
+                        $matches[] = $profanity;
+                    }
+                }
+            }
+        }
+        return $matches;
     }
 }
