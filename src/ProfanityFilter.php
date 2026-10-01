@@ -18,7 +18,7 @@ final class ProfanityFilter
         if ($this->containsProfanity($content)) {
             foreach (self::PROFANITIES as $profanity) {
                 foreach ($words as $index => $word) {
-                    if (mb_strtolower($word) === $profanity) {
+                    if ($this->normalize($word) === $profanity) {
                         $words[$index] = str_repeat($replacement, mb_strlen($profanity));
                     }
                 }
@@ -31,7 +31,7 @@ final class ProfanityFilter
     {
         foreach (self::PROFANITIES as $profanity) {
             foreach (explode(' ', $content) as $word) {
-                if (mb_strtolower($word) === $profanity) {
+                if ($this->normalize($word) === $profanity) {
                     return true;
                 }
             }
@@ -44,7 +44,7 @@ final class ProfanityFilter
         $matches = [];
         foreach (self::PROFANITIES as $profanity) {
             foreach (explode(' ', $content) as $word) {
-                if (mb_strtolower($word) === $profanity) {
+                if ($this->normalize($word) === $profanity) {
                     if (false === \in_array($profanity, $matches)) {
                         $matches[] = $profanity;
                     }
@@ -52,5 +52,16 @@ final class ProfanityFilter
             }
         }
         return $matches;
+    }
+
+    private function normalize(string $word): string
+    {
+        $excluded = ['.', '_', '*', '-', '/', '\\'];
+        foreach ($excluded as $item) {
+            if (false !== mb_stripos($word, $item)) {
+                $word = str_ireplace($item, '', $word);
+            }
+        }
+        return mb_strtolower($word);
     }
 }

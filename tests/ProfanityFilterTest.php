@@ -64,6 +64,12 @@ final class ProfanityFilterTest extends TestCase
         $this->assertSame('This #### is funny', $this->filter->clean($text, '#'));
     }
 
+    public function testCanReplaceWordsWithSeparators(): void
+    {
+        $text = "This s.h.i.t is funny";
+        $this->assertSame('This **** is funny', $this->filter->clean($text));
+    }
+
     public function testReturnsBadWords(): void
     {
         $text = "This shit is funny as fuck";
