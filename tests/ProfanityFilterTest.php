@@ -23,9 +23,27 @@ final class ProfanityFilterTest extends TestCase
         $this->assertSame('This **** is funny', $this->filter->clean($text));
     }
 
+    public function testCanFilterSameBadWordTwice(): void
+    {
+        $text = "This shit is funny, shit";
+        $this->assertSame('This **** is funny, ****', $this->filter->clean($text));
+    }
+
+    public function testCanFilterBadWordInTheBeginningOfASentence(): void
+    {
+        $text = "Shit happens";
+        $this->assertSame('**** happens', $this->filter->clean($text));
+    }
+
     public function testCanSpotBadWords(): void
     {
         $text = "This shit is funny";
+        $this->assertTrue($this->filter->containsProfanity($text));
+    }
+
+    public function testCanSpotBadWordInTheBeginningOfASentence(): void
+    {
+        $text = "Shit happens";
         $this->assertTrue($this->filter->containsProfanity($text));
     }
 

@@ -13,9 +13,9 @@ class ProfanityFilter
     public function clean(string $content, string $replacement = self::DEFAULT_REPLACEMENT): string
     {
         foreach (self::PROFANITIES as $profanity) {
-            if (mb_stripos($content, $profanity)) {
+            if (false !== mb_stripos($content, $profanity)) {
                 $censor = str_repeat($replacement, mb_strlen($profanity));
-                $content = str_replace($profanity, $censor, $content);
+                $content = str_ireplace($profanity, $censor, $content);
             }
         }
         return $content;
@@ -24,7 +24,7 @@ class ProfanityFilter
     public function containsProfanity(null|string $content): bool
     {
         foreach (self::PROFANITIES as $profanity) {
-            if (mb_stripos($content, $profanity)) {
+            if (false !== mb_stripos($content, $profanity)) {
                 return true;
             }
         }
