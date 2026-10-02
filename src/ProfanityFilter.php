@@ -70,19 +70,14 @@ final class ProfanityFilter
     {
         $word = $this->leetspeakInverter($word);
         $word = $this->removeRepeatedLetters($word);
-        $excluded = ['.', '_', '*', '-', '/', '\\'];
-        foreach ($excluded as $item) {
-            if (false !== mb_stripos($word, $item)) {
-                $word = str_ireplace($item, '', $word);
-            }
-        }
+        $word = $this->removeSeparators($word);
         return mb_strtolower($word);
     }
 
     private function leetspeakInverter(string $word): string
     {
         // Avoid false positives as 455 being converted to ASS with the correspondance table
-        if (is_numeric($word)) {
+        if (is_numeric($this->removeSeparators($word))) {
             return $word;
         }
         
@@ -153,5 +148,16 @@ final class ProfanityFilter
          * We have to adjust this index in the clean and the getMatches methods to return the good results.
          */
         return preg_split('/(\s+)/', $content, -1, PREG_SPLIT_DELIM_CAPTURE);
+    }
+
+    private function removeSeparators(string $word): string
+    {
+        $excluded = ['.', '_', '*', '-', '/', '\\'];
+        foreach ($excluded as $item) {
+            if (false !== mb_stripos($word, $item)) {
+                $word = str_ireplace($item, '', $word);
+            }
+        }
+        return $word;
     }
 }
