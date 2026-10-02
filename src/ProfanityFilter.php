@@ -51,7 +51,7 @@ final class ProfanityFilter
         $matches = [];
         foreach ($this->tokenize($content) as $index => $token) {
             /**
-             * Every even numbered index is a space or a line break so we ignore them
+             * Every odd numbered index is a space or a line break so we ignore them
              */
             if (1 === $index % 2) {
                 continue;
