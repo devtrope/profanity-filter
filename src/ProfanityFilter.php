@@ -36,7 +36,7 @@ final class ProfanityFilter
          * @var Detection $match
          */
         foreach ($this->getMatches($content) as $match) {
-            $words[$match->position] = str_repeat($replacement, mb_strlen($match->profanity));
+            $words[$match->position] = str_repeat($replacement, mb_strlen($match->original));
         }
         return implode(' ', $words);
     }

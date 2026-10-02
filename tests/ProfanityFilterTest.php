@@ -43,11 +43,11 @@ final class ProfanityFilterTest extends TestCase
         yield 'mot simple'                    => ['This shit is funny', 'This **** is funny'];
         yield 'même mot deux fois'            => ['This shit is funny, shit', 'This **** is funny, ****'];
         yield 'début de phrase'               => ['Shit happens', '**** happens'];
-        yield 'séparateurs'                   => ['This s.h.i.t is funny', 'This **** is funny'];
+        yield 'séparateurs'                   => ['This s.h.i.t is funny', 'This ******* is funny'];
         yield 'leetspeak'                     => ['This sh1t is funny', 'This **** is funny'];
-        yield 'lettres répétées'              => ['This shiiiiiit is funny', 'This **** is funny'];
-        yield 'lettres répétées et casse'     => ['This sHiiIiIiT is funny', 'This **** is funny'];
-        yield 'lettres répétées et leetspeak' => ['This shii111t is funny', 'This **** is funny'];
+        yield 'lettres répétées'              => ['This shiiiiiit is funny', 'This ********* is funny'];
+        yield 'lettres répétées et casse'     => ['This sHiiIiIiT is funny', 'This ********* is funny'];
+        yield 'lettres répétées et leetspeak' => ['This shii111t is funny', 'This ******** is funny'];
         yield 'retour à la ligne'             => ["This shit\n is funny", 'This **** is funny'];
         yield 'mot dans un autre mot'         => ['This is a class', 'This is a class'];
         yield 'aucune profanité'              => ['Hello world', 'Hello world'];
