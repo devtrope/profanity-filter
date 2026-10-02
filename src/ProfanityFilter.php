@@ -6,7 +6,7 @@ namespace ProfanityFilter;
 
 final class ProfanityFilter
 {
-    private const array PROFANITIES = ['shit', 'ass', 'fuck'];
+    private array $profanities = [];
     private const string DEFAULT_REPLACEMENT = '*';
     private const array LEETSPEAK = [
         '4' => 'A',
@@ -25,8 +25,12 @@ final class ProfanityFilter
         '2' => 'Z'
     ];
 
-    public function __construct()
-    {}
+    public function __construct(private readonly string $locale = 'en')
+    {
+        $blacklist = dirname(__DIR__) . "/data/blacklist.{$this->locale}.json";
+        $content = file_get_contents($blacklist);
+        $this->profanities = json_decode($content);
+    }
 
     public function clean(string $content, string $replacement = self::DEFAULT_REPLACEMENT): string
     {
@@ -56,7 +60,7 @@ final class ProfanityFilter
                 continue;
             }
 
-            foreach (self::PROFANITIES as $profanity) {
+            foreach ($this->profanities as $profanity) {
                 if ($this->normalize($token) === $profanity) {
                     $matches[] = new Detection($token, $profanity, intdiv($index, 2));
                 }
