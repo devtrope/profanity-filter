@@ -7,7 +7,8 @@ namespace Tests;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\TestCase;
-use ProfanityFilter\Detection;
+use ProfanityFilter\Support\Detection;
+use ProfanityFilter\Exceptions\MissingBlacklistFileException;
 use ProfanityFilter\ProfanityFilter;
 
 #[UsesClass(Detection::class)]
@@ -36,6 +37,24 @@ final class ProfanityFilterTest extends TestCase
     public function testGetMatches(string $input, array $expected): void
     {
         $this->assertEquals($expected, $this->filter->getMatches($input));
+    }
+
+    public function testCleanWithFrenchLocale(): void
+    {
+        $filter = new ProfanityFilter(locale: 'fr');
+        $this->assertSame('Fils de ****', $filter->clean('Fils de pute'));
+    }
+
+    public function testCleanWithGermanLocale(): void
+    {
+        $filter = new ProfanityFilter(locale: 'de');
+        $this->assertSame('*******', $filter->clean('scheiße'));
+    }
+
+    public function testThrowsWhenLocaleDoesNotExist(): void
+    {
+        $this->expectException(MissingBlacklistFileException::class);
+        new ProfanityFilter(locale: 'pl');
     }
 
     public static function cleanProvider(): iterable

@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace ProfanityFilter;
 
+use ProfanityFilter\Exceptions\MissingBlacklistFileException;
+use ProfanityFilter\Support\Detection;
+
 final class ProfanityFilter
 {
     private array $profanities = [];
@@ -28,6 +31,10 @@ final class ProfanityFilter
     public function __construct(private readonly string $locale = 'en')
     {
         $blacklist = dirname(__DIR__) . "/data/blacklist.{$this->locale}.json";
+        if (false === file_exists($blacklist)) {
+            throw new MissingBlacklistFileException("The blacklist file {$blacklist} does not exist");
+        }
+
         $content = file_get_contents($blacklist);
         $this->profanities = json_decode($content);
     }
