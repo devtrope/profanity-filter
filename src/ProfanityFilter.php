@@ -48,16 +48,7 @@ final class ProfanityFilter
 
     public function containsProfanity(string $content): bool
     {
-        // Remove all the new lines from the content
-        $content = trim(preg_replace('/\s\s+/', ' ', $content));
-        foreach (self::PROFANITIES as $profanity) {
-            foreach (explode(' ', $content) as $word) {
-                if ($this->normalize($word) === $profanity) {
-                    return true;
-                }
-            }
-        }
-        return false;
+        return false === empty($this->getMatches($content));
     }
 
     public function getMatches(string $content): array
@@ -66,11 +57,9 @@ final class ProfanityFilter
         $content = trim(preg_replace('/\s\s+/', ' ', $content));
         $matches = [];
         foreach (self::PROFANITIES as $profanity) {
-            foreach (explode(' ', $content) as $word) {
+            foreach (explode(' ', $content) as $index => $word) {
                 if ($this->normalize($word) === $profanity) {
-                    if (false === \in_array($profanity, $matches)) {
-                        $matches[] = $profanity;
-                    }
+                    $matches[] = new Detection($word, $profanity, $index);
                 }
             }
         }
