@@ -12,7 +12,7 @@ use UnexpectedValueException;
 final class ProfanityFilter
 {
     /**
-     * @var array<mixed, mixed>
+     * @var array<string, true>
      */
     private array $profanities = [];
     private const string DEFAULT_REPLACEMENT = '*';
@@ -55,7 +55,9 @@ final class ProfanityFilter
             throw new InvalidBlacklistException("{$blacklist} must contain a list of words");
         }
 
-        $this->profanities = $words;
+        foreach ($words as $word) {
+            $this->profanities[$word] = true;
+        }
     }
 
     /**
@@ -99,13 +101,35 @@ final class ProfanityFilter
                 continue;
             }
 
-            foreach ($this->profanities as $profanity) {
+            foreach ($this->profanities as $profanity => $value) {
                 if ($this->normalize($token) === $profanity) {
                     $matches[] = new Detection($token, $profanity, intdiv($index, 2));
                 }
             }
         }
         return $matches;
+    }
+
+    /**
+     * @param String[]|string $words
+     * @return void
+     */
+    public function addWords(array|string $words): void
+    {
+        foreach ((array) $words as $word) {
+            $this->profanities[$word] = true;
+        }
+    }
+
+    /**
+     * @param String[]|string $words
+     * @return void
+     */
+    public function removeWords(array|string $words): void
+    {
+        foreach ((array) $words as $word) {
+            unset($this->profanities[$word]);
+        }
     }
 
     /**

@@ -57,6 +57,34 @@ final class ProfanityFilterTest extends TestCase
         new ProfanityFilter(locale: 'pl');
     }
 
+    public function testCleanWithCustomWord(): void
+    {
+        $filter = new ProfanityFilter();
+        $filter->addWords('test');
+        $this->assertSame('This **** is a ****', $filter->clean('This shit is a test'));
+    }
+
+    public function testCleanWithCustomWords(): void
+    {
+        $filter = new ProfanityFilter();
+        $filter->addWords(['this', 'test']);
+        $this->assertSame('**** **** is a ****', $filter->clean('This shit is a test'));
+    }
+
+    public function testCleanWithRemovedWord(): void
+    {
+        $filter = new ProfanityFilter();
+        $filter->removeWords('shit');
+        $this->assertSame('This shit is funny', $filter->clean('This shit is funny'));
+    }
+
+    public function testCleanWithRemovedWords(): void
+    {
+        $filter = new ProfanityFilter();
+        $filter->removeWords(['shit', 'fuck']);
+        $this->assertSame('This shit is funny as fuck', $filter->clean('This shit is funny as fuck'));
+    }
+
     public static function cleanProvider(): iterable
     {
         yield 'mot simple'                         => ['This shit is funny', 'This **** is funny'];
