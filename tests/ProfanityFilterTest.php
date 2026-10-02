@@ -48,7 +48,12 @@ final class ProfanityFilterTest extends TestCase
         yield 'lettres répétées'              => ['This shiiiiiit is funny', 'This ********* is funny'];
         yield 'lettres répétées et casse'     => ['This sHiiIiIiT is funny', 'This ********* is funny'];
         yield 'lettres répétées et leetspeak' => ['This shii111t is funny', 'This ******** is funny'];
-        yield 'retour à la ligne'             => ["This shit\n is funny", 'This **** is funny'];
+        yield 'retour à la ligne'             => ["This shit\nis funny", "This ****\nis funny"];
+        yield 'retour + espace'               => ["This shit\n is funny", "This ****\n is funny"];
+        yield 'espaces multiples'             => ["This  shit   is funny", "This  ****   is funny"];
+        yield 'texte avec \r\n'               => ["This shit\r\nis funny", "This ****\r\nis funny"];
+        yield 'texte entre espaces'           => ["   This shit\r\nis funny   ", "   This ****\r\nis funny   "];
+        yield 'texte entre sauts de ligne'    => ["\n\n\n\nThis shit\r\nis funny\n\n\n\n", "\n\n\n\nThis ****\r\nis funny\n\n\n\n"];
         yield 'mot dans un autre mot'         => ['This is a class', 'This is a class'];
         yield 'aucune profanité'              => ['Hello world', 'Hello world'];
         yield 'faux leetspeak'                => ['The total is 455', 'The total is 455'];

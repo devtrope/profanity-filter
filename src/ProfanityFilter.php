@@ -31,14 +31,14 @@ final class ProfanityFilter
 
     public function clean(string $content, string $replacement = self::DEFAULT_REPLACEMENT): string
     {
-        $words = explode(' ', $content);
+        $tokens = $this->tokenize($content);
         /**
          * @var Detection $match
          */
         foreach ($this->getMatches($content) as $match) {
-            $words[$match->position] = str_repeat($replacement, mb_strlen($match->original));
+            $tokens[$match->position * 2] = str_repeat($replacement, mb_strlen($match->original));
         }
-        return implode(' ', $words);
+        return implode('', $tokens);
     }
 
     public function containsProfanity(string $content): bool
@@ -48,13 +48,18 @@ final class ProfanityFilter
 
     public function getMatches(string $content): array
     {
-        // Remove all the new lines from the content
-        $content = trim(preg_replace('/\s\s+/', ' ', $content));
         $matches = [];
-        foreach (self::PROFANITIES as $profanity) {
-            foreach (explode(' ', $content) as $index => $word) {
-                if ($this->normalize($word) === $profanity) {
-                    $matches[] = new Detection($word, $profanity, $index);
+        foreach ($this->tokenize($content) as $index => $token) {
+            /**
+             * Every even numbered index is a space or a line break so we ignore them
+             */
+            if (1 === $index % 2) {
+                continue;
+            }
+
+            foreach (self::PROFANITIES as $profanity) {
+                if ($this->normalize($token) === $profanity) {
+                    $matches[] = new Detection($token, $profanity, intdiv($index, 2));
                 }
             }
         }
@@ -128,5 +133,25 @@ final class ProfanityFilter
             }
         }
         return false;
+    }
+
+    private function tokenize(string $content): array
+    {
+        /**
+         * It's really important to understand what will be returned by this method because it can be
+         * hard to understand in the clean and the getMatches methods what the division and the multiplication
+         * by 2 are meaning.
+         * For example, if the sentence is "This shit is funny", tokenize will return:
+         * 0: This
+         * 1: " "
+         * 2: shit
+         * 3: " "
+         * 4: is
+         * 
+         * And so on, BUT the position in matches has to be the position of the word in the sentence not in this array.
+         * So again, here "shit" is at the position number 1 in the sentence but in the position number 2 in this array.
+         * We have to adjust this index in the clean and the getMatches methods to return the good results.
+         */
+        return preg_split('/(\s+)/', $content, -1, PREG_SPLIT_DELIM_CAPTURE);
     }
 }
