@@ -152,7 +152,7 @@ final class ProfanityFilter
 
     private function removeSeparators(string $word): string
     {
-        $excluded = ['.', '_', '*', '-', '/', '\\'];
+        $excluded = ['.', ',', ';', ':', '!', '?', '(', ')', '[', ']', '{', '}', '"', '\''];
         foreach ($excluded as $item) {
             if (false !== mb_stripos($word, $item)) {
                 $word = str_ireplace($item, '', $word);
