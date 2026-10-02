@@ -31,17 +31,12 @@ final class ProfanityFilter
 
     public function clean(string $content, string $replacement = self::DEFAULT_REPLACEMENT): string
     {
-        // Remove all the new lines from the content
-        $content = trim(preg_replace('/\s\s+/', ' ', $content));
         $words = explode(' ', $content);
-        if ($this->containsProfanity($content)) {
-            foreach (self::PROFANITIES as $profanity) {
-                foreach ($words as $index => $word) {
-                    if ($this->normalize($word) === $profanity) {
-                        $words[$index] = str_repeat($replacement, mb_strlen($profanity));
-                    }
-                }
-            }
+        /**
+         * @var Detection $match
+         */
+        foreach ($this->getMatches($content) as $match) {
+            $words[$match->position] = str_repeat($replacement, mb_strlen($match->profanity));
         }
         return implode(' ', $words);
     }
