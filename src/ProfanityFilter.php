@@ -12,7 +12,6 @@ final class ProfanityFilter
         '4' => 'A',
         '@' => 'A',
         '8' => 'B',
-        '|3' => 'B',
         '3' => 'E',
         '6' => 'G',
         '9' => 'G',
