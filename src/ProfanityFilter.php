@@ -4,11 +4,16 @@ declare(strict_types=1);
 
 namespace ProfanityFilter;
 
+use ProfanityFilter\Exceptions\InvalidBlacklistException;
 use ProfanityFilter\Exceptions\MissingBlacklistFileException;
 use ProfanityFilter\Support\Detection;
+use UnexpectedValueException;
 
 final class ProfanityFilter
 {
+    /**
+     * @var array<mixed, mixed>
+     */
     private array $profanities = [];
     private const string DEFAULT_REPLACEMENT = '*';
     private const array LEETSPEAK = [
@@ -28,6 +33,11 @@ final class ProfanityFilter
         '2' => 'Z'
     ];
 
+    /**
+     * @param string $locale
+     * @throws MissingBlacklistFileException
+     * @throws InvalidBlacklistException
+     */
     public function __construct(private readonly string $locale = 'en')
     {
         $blacklist = dirname(__DIR__) . "/data/blacklist.{$this->locale}.json";
@@ -35,10 +45,24 @@ final class ProfanityFilter
             throw new MissingBlacklistFileException("The blacklist file {$blacklist} does not exist");
         }
 
-        $content = file_get_contents($blacklist);
-        $this->profanities = json_decode($content);
+        try {
+            $words = json_decode((string) file_get_contents($blacklist), true, 512, JSON_THROW_ON_ERROR);
+        } catch (\JsonException $e) {
+            throw new InvalidBlacklistException("Invalid JSON in {$blacklist}", 0, $e);
+        }
+
+        if (false === \is_array($words)) {
+            throw new InvalidBlacklistException("{$blacklist} must contain a list of words");
+        }
+
+        $this->profanities = $words;
     }
 
+    /**
+     * @param string $content
+     * @param string $replacement
+     * @return string
+     */
     public function clean(string $content, string $replacement = self::DEFAULT_REPLACEMENT): string
     {
         $tokens = $this->tokenize($content);
@@ -51,11 +75,19 @@ final class ProfanityFilter
         return implode('', $tokens);
     }
 
+    /**
+     * @param string $content
+     * @return bool
+     */
     public function containsProfanity(string $content): bool
     {
         return false === empty($this->getMatches($content));
     }
 
+    /**
+     * @param string $content
+     * @return Detection[]
+     */
     public function getMatches(string $content): array
     {
         $matches = [];
@@ -76,6 +108,10 @@ final class ProfanityFilter
         return $matches;
     }
 
+    /**
+     * @param string $word
+     * @return string
+     */
     private function normalize(string $word): string
     {
         $word = $this->leetspeakInverter($word);
@@ -84,6 +120,10 @@ final class ProfanityFilter
         return mb_strtolower($word);
     }
 
+    /**
+     * @param string $word
+     * @return string
+     */
     private function leetspeakInverter(string $word): string
     {
         // Avoid false positives as 455 being converted to ASS with the correspondance table
@@ -101,6 +141,10 @@ final class ProfanityFilter
         return $purified;
     }
 
+    /**
+     * @param string $word
+     * @return string
+     */
     private function removeRepeatedLetters(string $word): string
     {
         if (false === $this->hasRepeatedLetters($word)) {
@@ -140,6 +184,10 @@ final class ProfanityFilter
         return false;
     }
 
+    /**
+     * @param string $content
+     * @return array<int, string>
+     */
     private function tokenize(string $content): array
     {
         /**
@@ -157,9 +205,16 @@ final class ProfanityFilter
          * So again, here "shit" is at the position number 1 in the sentence but in the position number 2 in this array.
          * We have to adjust this index in the clean and the getMatches methods to return the good results.
          */
-        return preg_split('/(\s+)/', $content, -1, PREG_SPLIT_DELIM_CAPTURE);
+        if (false === $parts = preg_split('/(\s+)/', $content, -1, PREG_SPLIT_DELIM_CAPTURE)) {
+            throw new UnexpectedValueException("Unexpected error on tokenize");
+        }
+        return $parts;
     }
 
+    /**
+     * @param string $word
+     * @return string
+     */
     private function removeSeparators(string $word): string
     {
         $excluded = ['.', ',', ';', ':', '!', '?', '(', ')', '[', ']', '{', '}', '"', '\''];
