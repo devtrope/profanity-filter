@@ -51,6 +51,8 @@ final class ProfanityFilterTest extends TestCase
         yield 'retour à la ligne'             => ["This shit\n is funny", 'This **** is funny'];
         yield 'mot dans un autre mot'         => ['This is a class', 'This is a class'];
         yield 'aucune profanité'              => ['Hello world', 'Hello world'];
+        yield 'faux leetspeak'                => ['The total is 455', 'The total is 455'];
+        yield 'faux leetspeak avec caractère' => ['The total is 455€', 'The total is 455€'];
     }
 
     public static function containsProvider(): iterable

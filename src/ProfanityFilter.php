@@ -76,6 +76,11 @@ final class ProfanityFilter
 
     private function leetspeakInverter(string $word): string
     {
+        // Avoid false positives as 455 being converted to ASS with the correspondance table
+        if (is_numeric($word)) {
+            return $word;
+        }
+        
         $purified = '';
         foreach (mb_str_split($word) as $letter) {
             if (isset(self::LEETSPEAK[$letter])) {
