@@ -202,9 +202,17 @@ final class ProfanityFilter
     private function hasRepeatedLetters(string $word): bool
     {
         $split = mb_str_split(mb_strtolower($word));
-        $countedValues = array_count_values($split);
-        foreach ($countedValues as $value) {
-            if (3 <= $value) {
+        $length = \count($split);
+        for ($i = 0; $i < $length; $i++) {
+            $current = $split[$i];
+            /**
+             * We want to check if the next and previous characters are identical to the
+             * current one, because we assume that three repeated letters are enough
+             */
+            if (
+                (isset($split[$i - 1]) && $split[$i - 1] === $current) &&
+                (isset($split[$i + 1]) && $split[$i + 1] === $current)
+            ) {
                 return true;
             }
         }
