@@ -55,6 +55,9 @@ final class ProfanityFilter
             throw new InvalidBlacklistException("{$blacklist} must contain a list of words");
         }
 
+        /**
+         * @var String[] $words
+         */
         foreach ($words as $word) {
             $this->profanities[$word] = true;
         }
