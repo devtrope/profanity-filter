@@ -85,6 +85,11 @@ final class ProfanityFilterTest extends TestCase
         $this->assertSame('This shit is funny as fuck', $filter->clean('This shit is funny as fuck'));
     }
 
+    public function testCleanWithPartialCensor(): void
+    {
+        $this->assertSame('This s**t is funny as f**k', $this->filter->clean(content: 'This shit is funny as fuck', partial: true));
+    }
+
     public static function cleanProvider(): iterable
     {
         yield 'mot simple'                         => ['This shit is funny', 'This **** is funny'];

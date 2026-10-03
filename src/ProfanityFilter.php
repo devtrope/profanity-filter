@@ -68,14 +68,14 @@ final class ProfanityFilter
      * @param string $replacement
      * @return string
      */
-    public function clean(string $content, string $replacement = self::DEFAULT_REPLACEMENT): string
+    public function clean(string $content, string $replacement = self::DEFAULT_REPLACEMENT, bool $partial = false): string
     {
         $tokens = $this->tokenize($content);
         /**
          * @var Detection $match
          */
         foreach ($this->getMatches($content) as $match) {
-            $tokens[$match->position * 2] = str_repeat($replacement, mb_strlen($match->original));
+            $tokens[$match->position * 2] = $this->censorWord($match->original, $replacement, $partial);
         }
         return implode('', $tokens);
     }
@@ -251,5 +251,15 @@ final class ProfanityFilter
             }
         }
         return $word;
+    }
+
+    private function censorWord(string $word, string $replacement, bool $partial): string
+    {
+        if (true === $partial) {
+            $firstLetter = substr($word, 0, 1);
+            $lastLetter = substr($word, mb_strlen($word) - 1, 1);
+            return $firstLetter . str_repeat($replacement, mb_strlen($word) - 2) . $lastLetter;
+        }
+        return str_repeat($replacement, mb_strlen($word));
     }
 }
