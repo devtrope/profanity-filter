@@ -45,6 +45,12 @@ final class ProfanityFilterTest extends TestCase
         $this->assertSame('Fils de ****', $filter->clean('Fils de pute'));
     }
 
+    public function testCleanWithAccentInWord(): void
+    {
+        $filter = new ProfanityFilter(locale: 'fr');
+        $this->assertSame('T\'es un ******', $filter->clean('T\'es un enculé'));
+    }
+
     public function testCleanWithGermanLocale(): void
     {
         $filter = new ProfanityFilter(locale: 'de');
@@ -88,6 +94,12 @@ final class ProfanityFilterTest extends TestCase
     public function testCleanWithPartialCensor(): void
     {
         $this->assertSame('This s**t is funny as f**k', $this->filter->clean(content: 'This shit is funny as fuck', partial: true));
+    }
+
+    public function testContainsWithGermanLocale(): void
+    {
+        $filter = new ProfanityFilter(locale: 'de');
+        $this->assertTrue( $filter->containsProfanity('scheiße'));
     }
 
     public static function cleanProvider(): iterable
