@@ -69,8 +69,11 @@ final class ProfanityFilter
      * @param string $replacement
      * @return string
      */
-    public function clean(string $content, string $replacement = self::DEFAULT_REPLACEMENT, bool $partial = false): string
-    {
+    public function clean(
+        string $content,
+        string $replacement = self::DEFAULT_REPLACEMENT,
+        bool $partial = false
+    ): string {
         $tokens = $this->tokenize($content);
         /**
          * @var Detection $match
@@ -211,8 +214,7 @@ final class ProfanityFilter
              * We want to check if the next and previous characters are identical to the
              * current one, because we assume that three repeated letters are enough
              */
-            if (
-                (isset($split[$i - 1]) && $split[$i - 1] === $current) &&
+            if ((isset($split[$i - 1]) && $split[$i - 1] === $current) &&
                 (isset($split[$i + 1]) && $split[$i + 1] === $current)
             ) {
                 return true;
@@ -237,7 +239,7 @@ final class ProfanityFilter
          * 2: shit
          * 3: " "
          * 4: is
-         * 
+         *
          * And so on, BUT the position in matches has to be the position of the word in the sentence not in this array.
          * So again, here "shit" is at the position number 1 in the sentence but in the position number 2 in this array.
          * We have to adjust this index in the clean and the getMatches methods to return the good results.
@@ -263,9 +265,15 @@ final class ProfanityFilter
         return $word;
     }
 
+    /**
+     * @param string $word
+     * @param string $replacement
+     * @param bool $partial
+     * @return string
+     */
     private function censorWord(string $word, string $replacement, bool $partial): string
     {
-        if (true === $partial) {
+        if (true === $partial && mb_strlen($word) > 2) {
             $firstLetter = mb_substr($word, 0, 1);
             $lastLetter = mb_substr($word, mb_strlen($word) - 1, 1);
             return $firstLetter . str_repeat($replacement, mb_strlen($word) - 2) . $lastLetter;

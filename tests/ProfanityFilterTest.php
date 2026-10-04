@@ -97,6 +97,12 @@ final class ProfanityFilterTest extends TestCase
         $this->assertTrue( $filter->containsProfanity('scheiße'));
     }
 
+    public function testCleanPartialWithTwoLettersWord(): void
+    {
+        $filter = new ProfanityFilter(locale: 'pt');
+        $this->assertSame('**', $filter->clean('cu', partial: true));
+    }
+
     public static function cleanProvider(): iterable
     {
         yield 'mot simple'                         => ['This shit is funny', 'This **** is funny'];
@@ -125,8 +131,8 @@ final class ProfanityFilterTest extends TestCase
 
     public static function cleanFrenchProvider(): iterable
     {
-        yield 'mot simple' => ['Fils de pute', 'Fils de ****'];
-        yield 'mot avec accent' => ['Tu es un enculé', 'Tu es un ******'];
+        yield 'mot simple'        => ['Fils de pute', 'Fils de ****'];
+        yield 'mot avec accent'   => ['Tu es un enculé', 'Tu es un ******'];
         yield 'mot avec ligature' => ['Mon cœur', 'Mon cœur'];
     }
 

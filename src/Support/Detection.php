@@ -10,6 +10,6 @@ final readonly class Detection
         public string $original,
         public string $profanity,
         public int $position
-    )
-    {}
+    ) {
+    }
 }
