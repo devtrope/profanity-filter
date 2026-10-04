@@ -39,16 +39,11 @@ final class ProfanityFilterTest extends TestCase
         $this->assertEquals($expected, $this->filter->getMatches($input));
     }
 
-    public function testCleanWithFrenchLocale(): void
+    #[DataProvider('cleanFrenchProvider')]
+    public function testCleanWithFrenchLocale(string $input, string $expected): void
     {
         $filter = new ProfanityFilter(locale: 'fr');
-        $this->assertSame('Fils de ****', $filter->clean('Fils de pute'));
-    }
-
-    public function testCleanWithAccentInWord(): void
-    {
-        $filter = new ProfanityFilter(locale: 'fr');
-        $this->assertSame('T\'es un ******', $filter->clean('T\'es un enculé'));
+        $this->assertSame($expected, $filter->clean($input));
     }
 
     public function testCleanWithGermanLocale(): void
@@ -126,6 +121,13 @@ final class ProfanityFilterTest extends TestCase
         yield 'faux leetspeak'                     => ['The total is 455', 'The total is 455'];
         yield 'faux leetspeak avec caractère'      => ['The total is 455€', 'The total is 455€'];
         yield 'faux leetspeak avec séparateurs'    => ['The total is 4.5.5', 'The total is 4.5.5'];
+    }
+
+    public static function cleanFrenchProvider(): iterable
+    {
+        yield 'mot simple' => ['Fils de pute', 'Fils de ****'];
+        yield 'mot avec accent' => ['Tu es un enculé', 'Tu es un ******'];
+        yield 'mot avec ligature' => ['Mon cœur', 'Mon cœur'];
     }
 
     public static function containsProvider(): iterable
