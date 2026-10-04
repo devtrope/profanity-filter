@@ -266,8 +266,8 @@ final class ProfanityFilter
     private function censorWord(string $word, string $replacement, bool $partial): string
     {
         if (true === $partial) {
-            $firstLetter = substr($word, 0, 1);
-            $lastLetter = substr($word, mb_strlen($word) - 1, 1);
+            $firstLetter = mb_substr($word, 0, 1);
+            $lastLetter = mb_substr($word, mb_strlen($word) - 1, 1);
             return $firstLetter . str_repeat($replacement, mb_strlen($word) - 2) . $lastLetter;
         }
         return str_repeat($replacement, mb_strlen($word));
