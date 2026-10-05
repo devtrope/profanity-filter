@@ -72,6 +72,13 @@ final class ProfanityFilterTest extends TestCase
         $this->assertSame('**** **** is a ****', $filter->clean('This shit is a test'));
     }
 
+    public function testCleanWithCustomFrenchWordWithAccents(): void
+    {
+        $filter = new ProfanityFilter(locale: 'fr');
+        $filter->addWords('café');
+        $this->assertSame('Je me suis fait un ****', $filter->clean('Je me suis fait un café'));
+    }
+
     public function testCleanWithRemovedWord(): void
     {
         $filter = new ProfanityFilter();
