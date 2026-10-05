@@ -15,13 +15,24 @@ final class ProfanityFilter
      * @var array<string, true>
      */
     private array $profanities = [];
+
+    /**
+     * @var string
+     */
     private const string DEFAULT_REPLACEMENT = '*';
+
+    /**
+     * @var array<int|string, string>
+     */
     private const array LEETSPEAK = [
         '4' => 'A', '@' => 'A', '8' => 'B', '3' => 'E', '6' => 'G', '9' => 'G',
         '1' => 'I', '|' => 'I', '0' => 'O', '5' => 'S', '$' => 'S', '7' => 'T',
         '+' => 'T', '2' => 'Z'
     ];
 
+    /**
+     * @var array<string, string>
+     */
     private const array ACCENTS = [
         'à' => 'a', 'á' => 'a', 'â' => 'a', 'ã' => 'a', 'ä' => 'a', 'å' => 'a', 'æ' => 'ae',
         'ç' => 'c',
@@ -43,15 +54,18 @@ final class ProfanityFilter
     {
         $blacklist = dirname(__DIR__) . "/data/blacklist.{$this->locale}.json";
         if (false === file_exists($blacklist)) {
-            throw new MissingBlacklistFileException("The blacklist file {$blacklist} does not exist");
+            throw new MissingBlacklistFileException(
+                "The blacklist file {$blacklist} does not exist. You can create
+                your own blacklist file and open a pull request to add it"
+            );
+        }
+        
+        $json = (string)file_get_contents($blacklist);
+        if (false === json_validate($json)) {
+            throw new InvalidBlacklistException("Invalid JSON in {$blacklist}");
         }
 
-        try {
-            $words = json_decode((string) file_get_contents($blacklist), true, 512, JSON_THROW_ON_ERROR);
-        } catch (\JsonException $e) {
-            throw new InvalidBlacklistException("Invalid JSON in {$blacklist}", 0, $e);
-        }
-
+        $words = json_decode($json, true);
         if (false === \is_array($words)) {
             throw new InvalidBlacklistException("{$blacklist} must contain a list of words");
         }
