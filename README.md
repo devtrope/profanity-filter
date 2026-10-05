@@ -15,7 +15,9 @@ echo $filter->clean('This sh1t is funny'); // This **** is funny
 - Detects and censors profanity, and tells you which words were found
 - Matches **whole words only**: `class` is never flagged because it contains `ass`
 - Case-insensitive (`Shit`, `SHIT`, `sHiT`)
+- Accent-insensitive while your text keeps its accents
 - Catches common evasions: leetspeak (`sh1t`, `$hit`), stretched letters (`shiiiit`) and punctuation inside a word (`s.h.i.t`)
+- Full or partial censoring (`****` or `s**t`)
 - Keeps your text intact: spaces, tabs and line breaks are preserved exactly as written
 - One word list per language, plus your own words on top
 
@@ -42,6 +44,17 @@ $filter->clean('This shit is funny', '#');   // This #### is funny
 ```
 
 Every character of a profane word is replaced by the replacement string (`*` by default). The rest of the text is returned untouched.
+
+Punctuation stuck to a profane word is masked with it: `Shit,` becomes `*****`.
+
+### Partial censoring
+
+Pass `partial: true` to keep the first and the last letter of each censored word:
+
+```php
+$filter->clean('This shit is funny as fuck', partial: true); // This s**t is funny as f**k
+```
+Words of one or two letters are always fully masked, because there is nothing left to hide in the middle.
 
 ### Check a text
 
@@ -101,26 +114,31 @@ $filter->removeWords(['cul', 'con']);
 
 Words must be written in lowercase, as a single word (no spaces). Removing a word is also how you handle a false positive for your own audience.
 
-## What gets detected
+Removing a word is als how you handle a false positive for your own audience.
 
-| Text            | Detected | Why                                         |
-|-----------------|----------|---------------------------------------------|
-| `Shit`, `SHIT`  | yes      | case-insensitive                            |
-| `sh1t`, `$hit`  | yes      | leetspeak                                   |
-| `shiiiiit`      | yes      | stretched letters                           |
-| `s.h.i.t`       | yes      | punctuation inside the word                 |
-| `shit!`, `(shit)` | yes    | punctuation around the word                 |
-| `class`, `assume` | no     | the profanity is only part of another word  |
-| `455`           | no       | numbers are not converted to letters        |
+## What gets detected
+ 
+| Text                | Detected | Why                                                |
+|---------------------|----------|----------------------------------------------------|
+| `Shit`, `SHIT`      | yes      | case-insensitive                                   |
+| `enculé`, `ENCULÉ`  | yes      | accents are ignored (`fr` list)                    |
+| `scheiße`           | yes      | `ß` is read as `ss` (`de` list)                    |
+| `sh1t`, `$hit`      | yes      | leetspeak                                          |
+| `shiiiiit`          | yes      | stretched letters                                  |
+| `asss`              | yes      | stretched letters, genuine double letters are kept |
+| `s.h.i.t`           | yes      | punctuation inside the word                        |
+| `shit!`, `(shit)`   | yes      | punctuation around the word                        |
+| `class`, `assume`   | no       | the profanity is only part of another word         |
+| `455`, `4.5.5`      | no       | numbers are not converted to letters               |
 
 ## Limitations
 
 This library is a word filter, not a moderation system. Keep these limits in mind:
 
-- **Accents are not normalized.** `enculé` and `encule` are two different entries. The provided lists contain both forms when it matters.
 - **Compound words** (common in German, for example) are not split, so a profanity glued to another word is not detected.
 - **Letters separated by spaces** (`s h i t`) are not detected.
 - **Look-alike Unicode characters** (a Cyrillic `а` instead of a Latin `a`) are not detected.
+- **Accent handling covers the supported languages**. Other alphabets are left as they are.
 - **Context is ignored.** The filter cannot tell an insult from a quotation, and a word can be harmless in one language and offensive in another.
 - The provided word lists are a starting point. They are not exhaustive and do not replace human review.
 
@@ -139,13 +157,19 @@ Lists are stored in `data/blacklist.{locale}.json`. A list is a flat JSON array 
 Rules for the entries:
 
 - lowercase, one word per entry, no spaces
-- letters only (no digits, no punctuation)
+- letters only, without accents: the text is stripped of its accents before the comparison
 - no letter repeated three times in a row
 - no duplicates
 
 Contributions for new languages or missing words are welcome: add or edit the file and the matching tests, then open a pull request.
 
-## Upgrading from 0.0.x
+## Upgrading
+
+### From 0.1.x
+
+Nothing breaks, `clean()` gets an optional `partial` argument, and the filter now catches more cases, so a text that passed before may now be flagged.
+
+### From 0.0.x
 
 This version is not backward compatible with the 0.0.x releases. The main differences:
 
@@ -157,7 +181,7 @@ This version is not backward compatible with the 0.0.x releases. The main differ
 
 ```bash
 composer install
-vendor/bin/phpunit
+vendor/bin/phpunit tests
 ```
 
 ## License
