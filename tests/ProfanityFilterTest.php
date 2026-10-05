@@ -197,6 +197,7 @@ final class ProfanityFilterTest extends TestCase
         yield 'fr majuscules accentuées'    => ['fr', 'ENCULÉ', '******'];
         yield 'fr ligature'                 => ['fr', 'Mon cœur', 'Mon cœur'];
         yield 'fr accents sans profanité'   => ['fr', 'Où est l\'été', 'Où est l\'été'];
+        yield 'fr avec apostrophe'          => ['fr', 'Espèce d\'enculé', 'Espèce d\'******'];
         yield 'de eszett'                   => ['de', 'scheiße', '*******'];
         yield 'de sans eszett'              => ['de', 'Scheisse', '********'];
         yield 'de majuscules'               => ['de', 'ARSCHLOCH', '*********'];

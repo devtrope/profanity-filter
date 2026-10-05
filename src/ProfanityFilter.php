@@ -264,7 +264,7 @@ final class ProfanityFilter
          * So again, here "shit" is at the position number 1 in the sentence but in the position number 2 in this array.
          * We have to adjust this index in the clean and the getMatches methods to return the good results.
          */
-        if (false === $parts = preg_split('/(\s+)/', $content, -1, PREG_SPLIT_DELIM_CAPTURE)) {
+        if (false === $parts = preg_split('/(\s+|\')/', $content, -1, PREG_SPLIT_DELIM_CAPTURE)) {
             throw new UnexpectedValueException("Unexpected error on tokenize");
         }
         return $parts;
