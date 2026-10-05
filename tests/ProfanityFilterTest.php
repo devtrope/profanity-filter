@@ -27,6 +27,13 @@ final class ProfanityFilterTest extends TestCase
         $this->assertSame($expected, $this->filter->clean($input));
     }
 
+    #[DataProvider('cleanProvider')]
+    public function testCleanIsIdempotent(string $input, string $expected): void
+    {
+        $once = $this->filter->clean($input);
+        $this->assertSame($once, $this->filter->clean($once));
+    }
+
     #[DataProvider('containsProvider')]
     public function testContainsProfanity(string $input, bool $expected): void
     {
@@ -39,75 +46,77 @@ final class ProfanityFilterTest extends TestCase
         $this->assertEquals($expected, $this->filter->getMatches($input));
     }
 
-    #[DataProvider('cleanFrenchProvider')]
-    public function testCleanWithFrenchLocale(string $input, string $expected): void
+    public function testCleanWithCustomReplacement(): void
     {
-        $filter = new ProfanityFilter(locale: 'fr');
+        $this->assertSame('You are a piece of ####', $this->filter->clean('You are a piece of shit', replacement: '#'));
+    }
+
+    public function testSuccessiveCallsAreIdempotent(): void
+    {
+        $this->assertSame('This **** is funny', $this->filter->clean('This shit is funny'));
+        $this->assertSame('Hello world', $this->filter->clean('Hello world'));
+        $this->assertSame([], $this->filter->getMatches('Hello world'));
+    }
+
+    #[DataProvider('partialProvider')]
+    public function testCleanWithPartialCensor(string $locale, string $input, string $expected): void
+    {
+        $filter = new ProfanityFilter(locale: $locale);
+        $this->assertSame($expected, $filter->clean($input, partial: true));
+    }
+
+    #[DataProvider('localeProvider')]
+    public function testCleanWithLocale(string $locale, string $input, string $expected): void
+    {
+        $filter = new ProfanityFilter(locale: $locale);
         $this->assertSame($expected, $filter->clean($input));
     }
 
-    public function testCleanWithGermanLocale(): void
+    #[DataProvider('localeProvider')]
+    public function testContainsProfanityWithLocale(string $locale, string $input, string $expected): void
     {
-        $filter = new ProfanityFilter(locale: 'de');
-        $this->assertSame('*******', $filter->clean('scheiße'));
+        $filter = new ProfanityFilter(locale: $locale);
+        $this->assertSame($input !== $expected, $filter->containsProfanity($input));
     }
 
-    public function testThrowsWhenLocaleDoesNotExist(): void
-    {
-        $this->expectException(MissingBlacklistFileException::class);
-        new ProfanityFilter(locale: 'pl');
-    }
-
-    public function testCleanWithCustomWord(): void
-    {
-        $filter = new ProfanityFilter();
-        $filter->addWords('test');
-        $this->assertSame('This **** is a ****', $filter->clean('This shit is a test'));
-    }
-
-    public function testCleanWithCustomWords(): void
-    {
-        $filter = new ProfanityFilter();
-        $filter->addWords(['this', 'test']);
-        $this->assertSame('**** **** is a ****', $filter->clean('This shit is a test'));
-    }
-
-    public function testCleanWithCustomFrenchWordWithAccents(): void
+    public function testGetMatchesWithAccentedWord(): void
     {
         $filter = new ProfanityFilter(locale: 'fr');
-        $filter->addWords('café');
-        $this->assertSame('Je me suis fait un ****', $filter->clean('Je me suis fait un café'));
+        $this->assertEquals([new Detection('enculé', 'encule', 3)], $filter->getMatches('Tu es un enculé'));
     }
 
-    public function testCleanWithRemovedWord(): void
+    #[DataProvider('unknownLocaleProvider')]
+    public function testThrowsWhenLocaleDoesNotExist(string $locale): void
     {
-        $filter = new ProfanityFilter();
-        $filter->removeWords('shit');
-        $this->assertSame('This shit is funny', $filter->clean('This shit is funny'));
+        $this->expectException(MissingBlacklistFileException::class);
+        new ProfanityFilter(locale: $locale);
     }
 
-    public function testCleanWithRemovedWords(): void
+    #[DataProvider('addedWordsProvider')]
+    public function testAddWords(array|string $words, string $input, string $expected): void
     {
-        $filter = new ProfanityFilter();
-        $filter->removeWords(['shit', 'fuck']);
-        $this->assertSame('This shit is funny as fuck', $filter->clean('This shit is funny as fuck'));
+        $this->filter->addWords($words);
+        $this->assertSame($expected, $this->filter->clean($input));
     }
 
-    public function testCleanWithPartialCensor(): void
+    public function testAddEmptyWordIsIgnored(): void
     {
-        $this->assertSame('This s**t is funny as f**k', $this->filter->clean(content: 'This shit is funny as fuck', partial: true));
+        $this->filter->addWords('');
+        $this->assertFalse($this->filter->containsProfanity(' Hello World '));
     }
 
-    public function testContainsWithGermanLocale(): void
+    #[DataProvider('removedWordsProvider')]
+    public function testRemoveWords(array|string $words, string $input): void
     {
-        $filter = new ProfanityFilter(locale: 'de');
-        $this->assertTrue( $filter->containsProfanity('scheiße'));
+        $this->filter->removeWords($words);
+        $this->assertSame($input, $this->filter->clean($input));
+        $this->assertFalse($this->filter->containsProfanity($input));
     }
 
-    public function testCleanPartialWithTwoLettersWord(): void
+    public function testRemoveUnknownWordDoesNothing(): void
     {
-        $filter = new ProfanityFilter(locale: 'pt');
-        $this->assertSame('**', $filter->clean('cu', partial: true));
+        $this->filter->removeWords('unknown');
+        $this->assertSame('This **** is funny', $this->filter->clean('This shit is funny'));
     }
 
     public static function cleanProvider(): iterable
@@ -134,13 +143,6 @@ final class ProfanityFilterTest extends TestCase
         yield 'faux leetspeak'                     => ['The total is 455', 'The total is 455'];
         yield 'faux leetspeak avec caractère'      => ['The total is 455€', 'The total is 455€'];
         yield 'faux leetspeak avec séparateurs'    => ['The total is 4.5.5', 'The total is 4.5.5'];
-    }
-
-    public static function cleanFrenchProvider(): iterable
-    {
-        yield 'mot simple'        => ['Fils de pute', 'Fils de ****'];
-        yield 'mot avec accent'   => ['Tu es un enculé', 'Tu es un ******'];
-        yield 'mot avec ligature' => ['Mon cœur', 'Mon cœur'];
     }
 
     public static function containsProvider(): iterable
@@ -179,5 +181,53 @@ final class ProfanityFilterTest extends TestCase
 
         yield 'aucune profanité' => ['This is a class', []];
     }
-}
 
+    public static function partialProvider(): iterable
+    {
+        yield 'mots de quatre lettres'      => ['en', 'This shit is funny as fuck', 'This s**t is funny as f**k'];
+        yield 'mot de trois lettres'        => ['en', 'What an ass', 'What an a*s'];
+        yield 'mot de deux lettres'         => ['pt', 'cu', '**'];
+        yield 'lettre accentuée conservée'  => ['fr', 'enculé', 'e****é'];
+    }
+
+    public static function localeProvider(): iterable
+    {
+        yield 'fr mot simple'               => ['fr', 'Fils de pute', 'Fils de ****'];
+        yield 'fr accent'                   => ['fr', 'Tu es un enculé', 'Tu es un ******'];
+        yield 'fr majuscules accentuées'    => ['fr', 'ENCULÉ', '******'];
+        yield 'fr ligature'                 => ['fr', 'Mon cœur', 'Mon cœur'];
+        yield 'fr accents sans profanité'   => ['fr', 'Où est l\'été', 'Où est l\'été'];
+        yield 'de eszett'                   => ['de', 'scheiße', '*******'];
+        yield 'de sans eszett'              => ['de', 'Scheisse', '********'];
+        yield 'de majuscules'               => ['de', 'ARSCHLOCH', '*********'];
+        yield 'es mot simple'               => ['es', 'Qué mierda', 'Qué ******'];
+        yield 'es accent'                   => ['es', 'cabrón', '******'];
+        yield 'it mot simple'               => ['it', 'Che cazzo vuoi', 'Che ***** vuoi'];
+        yield 'pt mot simple'               => ['pt', 'Que merda', 'Que *****'];
+        yield 'pt mot de deux lettres'      => ['pt', 'cu', '**'];
+        yield 'pt accent'                   => ['pt', 'seu otário', 'seu ******'];
+    }
+ 
+    public static function unknownLocaleProvider(): iterable
+    {
+        yield 'locale inconnue' => ['pl'];
+        yield 'locale vide'     => [''];
+        yield 'chemin relatif'  => ['../x'];
+    }
+ 
+    public static function addedWordsProvider(): iterable
+    {
+        yield 'un mot'               => ['test', 'This shit is a test', 'This **** is a ****'];
+        yield 'plusieurs mots'       => [['this', 'test'], 'This shit is a test', '**** **** is a ****'];
+        yield 'casse différente'     => ['Troll', 'Big TROLL here', 'Big ***** here'];
+        yield 'mot accentué'         => ['café', 'Un café', 'Un ****'];
+        yield 'texte en leetspeak'   => ['troll', 'Big tr0ll here', 'Big ***** here'];
+    }
+ 
+    public static function removedWordsProvider(): iterable
+    {
+        yield 'un mot'            => ['shit', 'This shit is funny'];
+        yield 'plusieurs mots'    => [['shit', 'fuck'], 'This shit is funny as fuck'];
+        yield 'casse différente'  => ['SHIT', 'This shit is funny'];
+    }
+}
