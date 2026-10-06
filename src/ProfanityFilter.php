@@ -7,6 +7,7 @@ namespace ProfanityFilter;
 use ProfanityFilter\Components\Detection;
 use ProfanityFilter\Components\Normalizer;
 use ProfanityFilter\Exceptions\InvalidBlacklistException;
+use ProfanityFilter\Exceptions\LocaleException;
 use ProfanityFilter\Exceptions\MissingBlacklistFileException;
 use UnexpectedValueException;
 
@@ -29,12 +30,17 @@ final class ProfanityFilter
 
     /**
      * @param string $locale
+     * @throws LocaleException
      * @throws MissingBlacklistFileException
      * @throws InvalidBlacklistException
      */
     public function __construct(private readonly string $locale = 'en')
     {
         $this->normalizer = Normalizer::default();
+
+        if (false === ctype_alpha($locale)) {
+            throw new LocaleException("Unsupported locale");
+        }
 
         $blacklist = dirname(__DIR__) . "/data/blacklist.{$this->locale}.json";
         if (false === file_exists($blacklist)) {

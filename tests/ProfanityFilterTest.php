@@ -8,6 +8,7 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\TestCase;
 use ProfanityFilter\Components\Detection;
+use ProfanityFilter\Exceptions\LocaleException;
 use ProfanityFilter\Exceptions\MissingBlacklistFileException;
 use ProfanityFilter\ProfanityFilter;
 
@@ -85,10 +86,16 @@ final class ProfanityFilterTest extends TestCase
         $this->assertEquals([new Detection('enculé', 'encule', 3)], $filter->getMatches('Tu es un enculé'));
     }
 
-    #[DataProvider('unknownLocaleProvider')]
-    public function testThrowsWhenLocaleDoesNotExist(string $locale): void
+    public function testThrowsWhenLocaleDoesNotExist(): void
     {
         $this->expectException(MissingBlacklistFileException::class);
+        new ProfanityFilter(locale: 'pl');
+    }
+
+    #[DataProvider('unsupportedLocaleProvider')]
+    public function testThrowsWhenLocaleIsNotSupported(string $locale): void
+    {
+        $this->expectException(LocaleException::class);
         new ProfanityFilter(locale: $locale);
     }
 
@@ -209,9 +216,8 @@ final class ProfanityFilterTest extends TestCase
         yield 'pt accent'                   => ['pt', 'seu otário', 'seu ******'];
     }
  
-    public static function unknownLocaleProvider(): iterable
+    public static function unsupportedLocaleProvider(): iterable
     {
-        yield 'locale inconnue' => ['pl'];
         yield 'locale vide'     => [''];
         yield 'chemin relatif'  => ['../x'];
     }
