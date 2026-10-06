@@ -43,7 +43,7 @@ final class ProfanityFilter
         }
 
         $blacklist = dirname(__DIR__) . "/data/blacklist.{$this->locale}.json";
-        if (false === file_exists($blacklist)) {
+        if (false === is_file($blacklist)) {
             throw new MissingBlacklistFileException(
                 "The blacklist file {$blacklist} does not exist. You can create
                 your own blacklist file and open a pull request to add it"
