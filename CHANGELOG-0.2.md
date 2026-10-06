@@ -4,6 +4,11 @@ This changelog references the relevant changes done in 0.2 minor versions.
 
 To get the diff between two versions, go to [https://github.com/devtrope/profanity-filter/compare/v0.1.2...v0.2.0](https://github.com/devtrope/profanity-filter/compare/v0.1.2...v0.2.0)
 
+## 0.2.1 - 2026-10-06
+
+### Fixes
+- Profane words with apostrophes are detected
+
 ## 0.2.0 - 2026-10-05
 
 ### Improvements
