@@ -2,10 +2,9 @@
 
 namespace ProfanityFilter\Exceptions;
 
-use Exception;
 use Throwable;
 
-final class LocaleException extends Exception
+final class LocaleException extends MissingBlacklistFileException
 {
     public function __construct(string $message = "", int $code = 0, Throwable|null $previous = null)
     {
