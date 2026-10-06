@@ -113,11 +113,13 @@ final class ProfanityFilter
     public function addWords(array|string $words): void
     {
         foreach ((array) $words as $word) {
-            if ('' === $word) {
+            if ('' === trim($word)) {
                 continue;
             }
             $this->profanities[$this->normalizer->normalize($word)] = true;
         }
+        var_dump($this->profanities);
+        die;
     }
 
     /**
@@ -127,7 +129,7 @@ final class ProfanityFilter
     public function removeWords(array|string $words): void
     {
         foreach ((array) $words as $word) {
-            if ('' === $word) {
+            if ('' === trim($word)) {
                 continue;
             }
             unset($this->profanities[$this->normalizer->normalize($word)]);
