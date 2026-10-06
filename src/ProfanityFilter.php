@@ -130,7 +130,7 @@ final class ProfanityFilter
 
     /**
      * @param string $content
-     * @return array<int, string>
+     * @return String[]
      */
     private function tokenize(string $content): array
     {
@@ -172,7 +172,7 @@ final class ProfanityFilter
     }
 
     /**
-     * @param array<int, string> $tokens
+     * @param String[] $tokens
      * @return Detection[]
      */
     private function detect(array $tokens): array
