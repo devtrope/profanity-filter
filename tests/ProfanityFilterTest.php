@@ -218,8 +218,12 @@ final class ProfanityFilterTest extends TestCase
  
     public static function unsupportedLocaleProvider(): iterable
     {
-        yield 'locale vide'     => [''];
-        yield 'chemin relatif'  => ['../x'];
+        yield 'locale vide'    => [''];
+        yield 'chemin relatif' => ['../x'];
+        yield 'path traversal' => ['en/../fr'];
+        yield 'extension'      => ['en.json'];
+        yield 'octet nul'      => ["en\0"];
+        yield 'dossier'        => ['..'];
     }
  
     public static function addedWordsProvider(): iterable
