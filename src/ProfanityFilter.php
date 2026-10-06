@@ -76,7 +76,7 @@ final class ProfanityFilter
         /**
          * @var Detection $match
          */
-        foreach ($this->getMatches($content) as $match) {
+        foreach ($this->detect($tokens) as $match) {
             $tokens[$match->position * 2] = $this->censorWord($match->original, $replacement, $partial);
         }
         return implode('', $tokens);
@@ -97,21 +97,7 @@ final class ProfanityFilter
      */
     public function getMatches(string $content): array
     {
-        $matches = [];
-        foreach ($this->tokenize($content) as $index => $token) {
-            /**
-             * Every odd numbered index is a space or a line break so we ignore them
-             */
-            if (1 === $index % 2) {
-                continue;
-            }
-
-            $normalized = $this->normalizer->normalize($token);
-            if (isset($this->profanities[$normalized])) {
-                $matches[] = new Detection($token, $normalized, intdiv($index, 2));
-            }
-        }
-        return $matches;
+        return $this->detect($this->tokenize($content));
     }
 
     /**
@@ -183,5 +169,28 @@ final class ProfanityFilter
             return $firstLetter . str_repeat($replacement, mb_strlen($word) - 2) . $lastLetter;
         }
         return str_repeat($replacement, mb_strlen($word));
+    }
+
+    /**
+     * @param array<int, string> $tokens
+     * @return Detection[]
+     */
+    private function detect(array $tokens): array
+    {
+        $matches = [];
+        foreach ($tokens as $index => $token) {
+            /**
+             * Every odd numbered index is a space or a line break so we ignore them
+             */
+            if (1 === $index % 2) {
+                continue;
+            }
+
+            $normalized = $this->normalizer->normalize($token);
+            if (isset($this->profanities[$normalized])) {
+                $matches[] = new Detection($token, $normalized, intdiv($index, 2));
+            }
+        }
+        return $matches;
     }
 }
