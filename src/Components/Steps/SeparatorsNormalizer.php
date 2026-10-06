@@ -7,16 +7,15 @@ use ProfanityFilter\Components\Steps\Support\NormalizerStepInterface;
 final class SeparatorsNormalizer implements NormalizerStepInterface
 {
     /**
+     * @var String[]
+     */
+    private const array EXCLUDED = ['.', ',', ';', ':', '!', '?', '(', ')', '[', ']', '{', '}', '"', '\''];
+    
+    /**
      * @inheritDoc
      */
     public function apply(string $word): string
     {
-        $excluded = ['.', ',', ';', ':', '!', '?', '(', ')', '[', ']', '{', '}', '"', '\''];
-        foreach ($excluded as $item) {
-            if (false !== mb_stripos($word, $item)) {
-                $word = str_ireplace($item, '', $word);
-            }
-        }
-        return $word;
+        return str_ireplace(self::EXCLUDED, '', $word);
     }
 }

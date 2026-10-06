@@ -26,7 +26,6 @@ final class AccentsNormalizer implements NormalizerStepInterface
      */
     public function apply(string $word): string
     {
-        $word = strtr(mb_strtolower($word), self::ACCENTS);
-        return $word;
+        return strtr($word, self::ACCENTS);
     }
 }

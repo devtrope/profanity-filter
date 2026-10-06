@@ -17,7 +17,7 @@ final class RepetitionsNormalizer implements NormalizerStepInterface
         
         $purified = '';
         $lastLetters = [];
-        foreach (mb_str_split(mb_strtolower($word)) as $letter) {
+        foreach (mb_str_split($word) as $letter) {
             if (2 === \count($lastLetters)) {
                 if (end($lastLetters) === $letter) {
                     continue;
@@ -38,7 +38,7 @@ final class RepetitionsNormalizer implements NormalizerStepInterface
      */
     private function hasRepeatedLetters(string $word): bool
     {
-        $split = mb_str_split(mb_strtolower($word));
+        $split = mb_str_split($word);
         $length = \count($split);
         for ($i = 0; $i < $length; $i++) {
             $current = $split[$i];

@@ -24,14 +24,6 @@ final class LeetspeakNormalizer implements NormalizerStepInterface
         if (is_numeric($word)) {
             return $word;
         }
-        
-        $purified = '';
-        foreach (mb_str_split($word) as $letter) {
-            if (isset(self::LEETSPEAK[$letter])) {
-                $letter = self::LEETSPEAK[$letter];
-            }
-            $purified .= $letter;
-        }
-        return $purified;
+        return strtr($word, self::LEETSPEAK);
     }
 }
