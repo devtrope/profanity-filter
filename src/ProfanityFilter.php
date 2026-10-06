@@ -106,10 +106,9 @@ final class ProfanityFilter
                 continue;
             }
 
-            foreach ($this->profanities as $profanity => $value) {
-                if ($this->normalizer->normalize($token) === $profanity) {
-                    $matches[] = new Detection($token, $profanity, intdiv($index, 2));
-                }
+            $normalized = $this->normalizer->normalize($token);
+            if (isset($this->profanities[$normalized])) {
+                $matches[] = new Detection($token, $normalized, intdiv($index, 2));
             }
         }
         return $matches;
