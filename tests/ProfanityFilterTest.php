@@ -7,7 +7,7 @@ namespace Tests;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\TestCase;
-use ProfanityFilter\Support\Detection;
+use ProfanityFilter\Components\Detection;
 use ProfanityFilter\Exceptions\MissingBlacklistFileException;
 use ProfanityFilter\ProfanityFilter;
 

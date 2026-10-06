@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace ProfanityFilter\Support;
+namespace ProfanityFilter\Components;
 
 final readonly class Detection
 {

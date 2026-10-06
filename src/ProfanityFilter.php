@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace ProfanityFilter;
 
-use ProfanityFilter\Support\Normalizer;
+use ProfanityFilter\Components\Detection;
+use ProfanityFilter\Components\Normalizer;
 use ProfanityFilter\Exceptions\InvalidBlacklistException;
 use ProfanityFilter\Exceptions\MissingBlacklistFileException;
-use ProfanityFilter\Support\Detection;
 use UnexpectedValueException;
 
 final class ProfanityFilter
@@ -34,7 +34,7 @@ final class ProfanityFilter
      */
     public function __construct(private readonly string $locale = 'en')
     {
-        $this->normalizer = new Normalizer();
+        $this->normalizer = Normalizer::default();
 
         $blacklist = dirname(__DIR__) . "/data/blacklist.{$this->locale}.json";
         if (false === file_exists($blacklist)) {
