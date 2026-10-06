@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ProfanityFilter\Components;
 
 use ProfanityFilter\Components\Steps\AccentsNormalizer;

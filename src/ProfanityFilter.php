@@ -6,6 +6,7 @@ namespace ProfanityFilter;
 
 use ProfanityFilter\Components\Detection;
 use ProfanityFilter\Components\Normalizer;
+use ProfanityFilter\Components\WordsList;
 use ProfanityFilter\Exceptions\InvalidBlacklistException;
 use ProfanityFilter\Exceptions\LocaleException;
 use ProfanityFilter\Exceptions\MissingBlacklistFileException;
@@ -34,36 +35,11 @@ final class ProfanityFilter
      * @throws MissingBlacklistFileException
      * @throws InvalidBlacklistException
      */
-    public function __construct(private readonly string $locale = 'en')
+    public function __construct(private string $locale = 'en')
     {
         $this->normalizer = Normalizer::default();
-
-        if (false === ctype_alpha($locale)) {
-            throw new LocaleException("Unsupported locale");
-        }
-
-        $blacklist = dirname(__DIR__) . "/data/blacklist.{$this->locale}.json";
-        if (false === is_file($blacklist)) {
-            throw new MissingBlacklistFileException(
-                "The blacklist file {$blacklist} does not exist. You can create
-                your own blacklist file and open a pull request to add it"
-            );
-        }
-        
-        $json = (string)file_get_contents($blacklist);
-        if (false === json_validate($json)) {
-            throw new InvalidBlacklistException("Invalid JSON in {$blacklist}");
-        }
-
-        $words = json_decode($json, true);
-        if (false === \is_array($words)) {
-            throw new InvalidBlacklistException("{$blacklist} must contain a list of words");
-        }
-
-        /**
-         * @var String[] $words
-         */
-        foreach ($words as $word) {
+        $words = new WordsList($locale);
+        foreach ($words->getAll() as $word) {
             $this->profanities[$this->normalizer->normalize($word)] = true;
         }
     }
@@ -79,9 +55,6 @@ final class ProfanityFilter
         bool $partial = false
     ): string {
         $tokens = $this->tokenize($content);
-        /**
-         * @var Detection $match
-         */
         foreach ($this->detect($tokens) as $match) {
             $tokens[$match->position * 2] = $this->censorWord($match->original, $replacement, $partial);
         }
@@ -118,8 +91,6 @@ final class ProfanityFilter
             }
             $this->profanities[$this->normalizer->normalize($word)] = true;
         }
-        var_dump($this->profanities);
-        die;
     }
 
     /**

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ProfanityFilter\Components\Steps;
 
 use ProfanityFilter\Components\Steps\Support\NormalizerStepInterface;
@@ -10,7 +12,7 @@ final class SeparatorsNormalizer implements NormalizerStepInterface
      * @var String[]
      */
     private const array EXCLUDED = ['.', ',', ';', ':', '!', '?', '(', ')', '[', ']', '{', '}', '"', '\''];
-    
+
     /**
      * @inheritDoc
      */

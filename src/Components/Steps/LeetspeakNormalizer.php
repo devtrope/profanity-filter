@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ProfanityFilter\Components\Steps;
 
 use ProfanityFilter\Components\Steps\Support\NormalizerStepInterface;
