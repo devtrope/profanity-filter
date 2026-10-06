@@ -9,7 +9,7 @@ use ProfanityFilter\Components\Steps\Support\NormalizerStepInterface;
 final class SeparatorsNormalizer implements NormalizerStepInterface
 {
     /**
-     * @var String[]
+     * @var list<string>
      */
     private const array EXCLUDED = ['.', ',', ';', ':', '!', '?', '(', ')', '[', ']', '{', '}', '"', '\''];
 
