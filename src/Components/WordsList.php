@@ -24,7 +24,7 @@ final class WordsList
     /**
      * @throws MissingBlacklistFileException
      * @throws InvalidBlacklistException
-     * @return String[]
+     * @return list<string>
      */
     public function getAll(): array
     {

@@ -72,7 +72,7 @@ final class ProfanityFilter
 
     /**
      * @param string $content
-     * @return Detection[]
+     * @return list<Detection>
      */
     public function getMatches(string $content): array
     {
@@ -80,7 +80,7 @@ final class ProfanityFilter
     }
 
     /**
-     * @param String[]|string $words
+     * @param list<string>|string $words
      * @return void
      */
     public function addWords(array|string $words): void
@@ -94,7 +94,7 @@ final class ProfanityFilter
     }
 
     /**
-     * @param String[]|string $words
+     * @param list<string>|string $words
      * @return void
      */
     public function removeWords(array|string $words): void
@@ -109,7 +109,7 @@ final class ProfanityFilter
 
     /**
      * @param string $content
-     * @return String[]
+     * @return list<string>
      */
     private function tokenize(string $content): array
     {
@@ -151,8 +151,8 @@ final class ProfanityFilter
     }
 
     /**
-     * @param String[] $tokens
-     * @return Detection[]
+     * @param list<string> $tokens
+     * @return list<Detection>
      */
     private function detect(array $tokens): array
     {
