@@ -35,7 +35,7 @@ final class ProfanityFilter
      * @throws MissingBlacklistFileException
      * @throws InvalidBlacklistException
      */
-    public function __construct(private string $locale = 'en')
+    public function __construct(private readonly string $locale = 'en')
     {
         $this->normalizer = Normalizer::default();
         $words = new WordsList($locale);
@@ -47,6 +47,7 @@ final class ProfanityFilter
     /**
      * @param string $content
      * @param string $replacement
+     * @param bool $partial
      * @return string
      */
     public function clean(
