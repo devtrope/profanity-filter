@@ -86,6 +86,20 @@ foreach ($matches as $match) {
 
 This is useful to tell users why a message was refused, to feed a moderation queue, or to apply your own rules (for example, reject a message after a certain number of detections).
 
+### Word Positioning
+
+The `Detection::position` property represents the zero-based index of a token within the original text.
+Tokens are separated by whitespace and apostrophes. Apostrophes are treated as delimiters rather than being preserved as part of a word.
+For example "I'm happy" produces the following token positions:
+
+| Token    | Position  |
+|----------|-----------|
+| I        | 0         |
+| m        | 1         |
+| happy    | 2         |
+
+This behavior is intentional and keeps token indexing consistent across all supported languages.
+
 ### Choose a language
 
 Pass a locale to the constructor. The default is `en`.

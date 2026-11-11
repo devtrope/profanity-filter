@@ -186,6 +186,21 @@ final class ProfanityFilterTest extends TestCase
             [new Detection('shit', 'shit', 1)],
         ];
 
+        yield 'contraction' => [
+            "I'm a shit developer",
+            [new Detection('shit', 'shit', 3)]
+        ];
+
+        yield 'contraction avant profanité' => [
+            "You're shit",
+            [new Detection('shit', 'shit', 2)]
+        ];
+
+        yield 'plusieurs contractions' => [
+            "I don't think it's shit",
+            [new Detection('shit', 'shit', 6)]
+        ];
+
         yield 'aucune profanité' => ['This is a class', []];
     }
 
