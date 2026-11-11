@@ -206,10 +206,13 @@ final class ProfanityFilterTest extends TestCase
 
     public static function partialProvider(): iterable
     {
-        yield 'mots de quatre lettres'      => ['en', 'This shit is funny as fuck', 'This s**t is funny as f**k'];
-        yield 'mot de trois lettres'        => ['en', 'What an ass', 'What an a*s'];
-        yield 'mot de deux lettres'         => ['pt', 'cu', '**'];
-        yield 'lettre accentuée conservée'  => ['fr', 'enculé', 'e****é'];
+        yield 'mots de quatre lettres'            => ['en', 'This shit is funny as fuck', 'This s**t is funny as f**k'];
+        yield 'mot de trois lettres'              => ['en', 'What an ass', 'What an a*s'];
+        yield 'mot de deux lettres'               => ['pt', 'cu', '**'];
+        yield 'lettre accentuée conservée'        => ['fr', 'enculé', 'e****é'];
+        yield 'ponctuation dans le mot'           => ['fr', 'enculé!', 'e****é!'];
+        yield 'ponctuation entourant le mot'      => ['fr', 'Je suis gentil (con)', 'Je suis gentil (c*n)'];
+        yield 'ponctuations entourant le mot'     => ['fr', 'Je suis un .....enculé.....', 'Je suis un .....e****é.....'];
     }
 
     public static function localeProvider(): iterable

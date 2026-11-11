@@ -38,7 +38,7 @@ final class ProfanityFilter
     public function __construct(private readonly string $locale = 'en')
     {
         $this->normalizer = Normalizer::default();
-        $words = new WordsList($locale);
+        $words = new WordsList($this->locale);
         foreach ($words->getAll() as $word) {
             $this->profanities[$this->normalizer->normalize($word)] = true;
         }
@@ -143,12 +143,42 @@ final class ProfanityFilter
      */
     private function censorWord(string $word, string $replacement, bool $partial): string
     {
-        if (true === $partial && mb_strlen($word) > 2) {
-            $firstLetter = mb_substr($word, 0, 1);
-            $lastLetter = mb_substr($word, mb_strlen($word) - 1, 1);
-            return $firstLetter . str_repeat($replacement, mb_strlen($word) - 2) . $lastLetter;
+        $length = mb_strlen($word);
+        if (false === $partial || $length <= 2) {
+            return str_repeat($replacement, $length);
         }
-        return str_repeat($replacement, mb_strlen($word));
+
+        /**
+         * If the developer wants to use partial censoring, we need to avoid censoring punctuation
+         * before and after the word itself
+         */
+        $punctuation = [',', '!', '.', '(', ')', '\'', '"'];
+        $start = 0;
+        $end = $length - 1;
+
+        while ($start < $length && \in_array(mb_substr($word, $start, 1), $punctuation, strict: true)) {
+            $start++;
+        }
+
+        while ($end >= $start && \in_array(mb_substr($word, $end, 1), $punctuation, strict: true)) {
+            $end--;
+        }
+
+        /**
+         * There's no character left to preserve or just one
+         */
+        if ($end - $start < 1) {
+            return str_repeat($replacement, $length);
+        }
+
+        $prefix = mb_substr($word, 0, $start);
+        $firstLetter = mb_substr($word, $start, 1);
+        $lastLetter = mb_substr($word, $end, 1);
+        $suffix = mb_substr($word, $end + 1);
+
+        $maskedLength = $end - $start - 1;
+
+        return $prefix . $firstLetter . str_repeat($replacement, $maskedLength) . $lastLetter . $suffix;
     }
 
     /**
