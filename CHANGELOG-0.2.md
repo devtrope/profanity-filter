@@ -4,6 +4,14 @@ This changelog references the relevant changes done in 0.2 minor versions.
 
 To get the diff between two versions, go to [https://github.com/devtrope/profanity-filter/compare/v0.1.2...v0.2.0](https://github.com/devtrope/profanity-filter/compare/v0.1.2...v0.2.0)
 
+## 0.2.3 - 2026-11-12
+
+### Fixes
+- Remove the letter `ñ` from the `AccentsNormalizer` to avoid issues with double meaning words in spanish
+
+### Improvements
+- Add more separators on the tokenization part to be more precise on the detection
+
 ## 0.2.2 - 2026-11-11
 
 ### Fixes
