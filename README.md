@@ -126,8 +126,6 @@ $filter->removeWords('cul');
 $filter->removeWords(['cul', 'con']);
 ```
 
-Words must be written in lowercase, as a single word (no spaces). Removing a word is also how you handle a false positive for your own audience.
-
 ## What gets detected
  
 | Text                | Detected | Why                                                |
