@@ -234,6 +234,8 @@ final class ProfanityFilterTest extends TestCase
         yield 'pt mot simple'               => ['pt', 'Que merda', 'Que *****'];
         yield 'pt mot de deux lettres'      => ['pt', 'cu', '**'];
         yield 'pt accent'                   => ['pt', 'seu otário', 'seu ******'];
+        yield 'es cone'                     => ['es', 'cono', 'cono'];
+        yield 'es insulte'                  => ['es', 'coño', '****'];
     }
  
     public static function unsupportedLocaleProvider(): iterable

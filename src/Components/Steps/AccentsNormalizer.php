@@ -16,7 +16,6 @@ final class AccentsNormalizer implements NormalizerStepInterface
         'ç' => 'c',
         'è' => 'e', 'é' => 'e', 'ê' => 'e', 'ë' => 'e',
         'ì' => 'i', 'í' => 'i', 'î' => 'i', 'ï' => 'i',
-        'ñ' => 'n',
         'ò' => 'o', 'ó' => 'o', 'ô' => 'o', 'õ' => 'o', 'ö' => 'o', 'œ' => 'oe',
         'ù' => 'u', 'ú' => 'u', 'û' => 'u', 'ü' => 'u',
         'ý' => 'y', 'ÿ' => 'y',
