@@ -128,8 +128,6 @@ $filter->removeWords(['cul', 'con']);
 
 Words must be written in lowercase, as a single word (no spaces). Removing a word is also how you handle a false positive for your own audience.
 
-Removing a word is also how you handle a false positive for your own audience.
-
 ## What gets detected
  
 | Text                | Detected | Why                                                |
@@ -139,7 +137,7 @@ Removing a word is also how you handle a false positive for your own audience.
 | `scheiße`           | yes      | `ß` is read as `ss` (`de` list)                    |
 | `sh1t`, `$hit`      | yes      | leetspeak                                          |
 | `shiiiiit`          | yes      | stretched letters                                  |
-| `asss`              | yes      | stretched letters, genuine double letters are kept |
+| `assss`             | yes      | stretched letters, genuine double letters are kept |
 | `s.h.i.t`           | yes      | punctuation inside the word                        |
 | `shit!`, `(shit)`   | yes      | punctuation around the word                        |
 | `class`, `assume`   | no       | the profanity is only part of another word         |
@@ -155,6 +153,7 @@ This library is a word filter, not a moderation system. Keep these limits in min
 - **Accent handling covers the supported languages**. Other alphabets are left as they are.
 - **Context is ignored.** The filter cannot tell an insult from a quotation, and a word can be harmless in one language and offensive in another.
 - The provided word lists are a starting point. They are not exhaustive and do not replace human review.
+- If a word contains 3 repeated letters, it's not detected.
 
 ## Word lists
 

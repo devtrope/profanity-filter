@@ -150,6 +150,8 @@ final class ProfanityFilterTest extends TestCase
         yield 'faux leetspeak'                     => ['The total is 455', 'The total is 455'];
         yield 'faux leetspeak avec caractère'      => ['The total is 455€', 'The total is 455€'];
         yield 'faux leetspeak avec séparateurs'    => ['The total is 4.5.5', 'The total is 4.5.5'];
+        yield 'séparateur entre mots'              => ['shit-fuck', '****-****'];
+        yield 'séparateur entre mots sans censure' => ['shit/man', '****/man'];
     }
 
     public static function containsProvider(): iterable

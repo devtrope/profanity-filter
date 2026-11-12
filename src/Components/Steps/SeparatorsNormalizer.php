@@ -11,7 +11,7 @@ final class SeparatorsNormalizer implements NormalizerStepInterface
     /**
      * @var list<string>
      */
-    private const array EXCLUDED = ['.', ',', ';', ':', '!', '?', '(', ')', '[', ']', '{', '}', '"', '\''];
+    private const array EXCLUDED = ['.', ',', ';', ':', '!', '?', '(', ')', '[', ']', '{', '}', '"', '\'', '/', '\\', '-', '_'];
 
     /**
      * @inheritDoc
