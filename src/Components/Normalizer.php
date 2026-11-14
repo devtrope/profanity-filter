@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace ProfanityFilter\Components;
+namespace Devtrope\ProfanityFilter\Components;
 
-use ProfanityFilter\Components\Steps\AccentsNormalizer;
-use ProfanityFilter\Components\Steps\LeetspeakNormalizer;
-use ProfanityFilter\Components\Steps\LowercaseNormalizer;
-use ProfanityFilter\Components\Steps\RepetitionsNormalizer;
-use ProfanityFilter\Components\Steps\SeparatorsNormalizer;
-use ProfanityFilter\Components\Steps\Support\NormalizerStepInterface;
+use Devtrope\ProfanityFilter\Components\Steps\AccentsNormalizer;
+use Devtrope\ProfanityFilter\Components\Steps\LeetspeakNormalizer;
+use Devtrope\ProfanityFilter\Components\Steps\LowercaseNormalizer;
+use Devtrope\ProfanityFilter\Components\Steps\RepetitionsNormalizer;
+use Devtrope\ProfanityFilter\Components\Steps\SeparatorsNormalizer;
+use Devtrope\ProfanityFilter\Components\Steps\Support\NormalizerStepInterface;
 
 final class Normalizer
 {

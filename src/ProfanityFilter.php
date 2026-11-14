@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace ProfanityFilter;
+namespace Devtrope\ProfanityFilter;
 
-use ProfanityFilter\Components\Detection;
-use ProfanityFilter\Components\Normalizer;
-use ProfanityFilter\Components\WordsList;
-use ProfanityFilter\Exceptions\InvalidBlacklistException;
-use ProfanityFilter\Exceptions\LocaleException;
-use ProfanityFilter\Exceptions\MissingBlacklistFileException;
+use Devtrope\ProfanityFilter\Components\Detection;
+use Devtrope\ProfanityFilter\Components\Normalizer;
+use Devtrope\ProfanityFilter\Components\WordsList;
+use Devtrope\ProfanityFilter\Exceptions\InvalidBlacklistException;
+use Devtrope\ProfanityFilter\Exceptions\LocaleException;
+use Devtrope\ProfanityFilter\Exceptions\MissingBlacklistFileException;
 use UnexpectedValueException;
 
 final class ProfanityFilter
@@ -110,6 +110,7 @@ final class ProfanityFilter
 
     /**
      * @param string $content
+     * @throws UnexpectedValueException
      * @return list<string>
      */
     private function tokenize(string $content): array

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace ProfanityFilter\Components\Steps\Support;
+namespace Devtrope\ProfanityFilter\Components\Steps\Support;
 
 interface NormalizerStepInterface
 {

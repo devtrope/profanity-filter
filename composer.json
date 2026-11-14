@@ -1,12 +1,12 @@
 {
     "name": "devtrope/profanity-filter",
-    "description": "A profanity filter for PHP",
+    "description": "Lightweight and customizable PHP package for detecting and censoring profanity in text.",
     "type": "library",
-    "keywords": ["profanity", "filter", "php"],
+    "keywords": ["profanity", "filter", "ban", "swear"],
     "license": "MIT",
     "autoload": {
         "psr-4": {
-            "ProfanityFilter\\": "src/"
+            "Devtrope\\ProfanityFilter\\": "src/"
         }
     },
     "autoload-dev": {

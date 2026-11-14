@@ -7,10 +7,10 @@ namespace Tests;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\TestCase;
-use ProfanityFilter\Components\Detection;
-use ProfanityFilter\Exceptions\LocaleException;
-use ProfanityFilter\Exceptions\MissingBlacklistFileException;
-use ProfanityFilter\ProfanityFilter;
+use Devtrope\ProfanityFilter\Components\Detection;
+use Devtrope\ProfanityFilter\Exceptions\LocaleException;
+use Devtrope\ProfanityFilter\Exceptions\MissingBlacklistFileException;
+use Devtrope\ProfanityFilter\ProfanityFilter;
 
 #[UsesClass(Detection::class)]
 final class ProfanityFilterTest extends TestCase

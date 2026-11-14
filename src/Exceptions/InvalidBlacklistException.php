@@ -1,6 +1,6 @@
 <?php
 
-namespace ProfanityFilter\Exceptions;
+namespace Devtrope\ProfanityFilter\Exceptions;
 
 use Exception;
 use Throwable;

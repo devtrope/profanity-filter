@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace ProfanityFilter\Components;
+namespace Devtrope\ProfanityFilter\Components;
 
-use ProfanityFilter\Exceptions\InvalidBlacklistException;
-use ProfanityFilter\Exceptions\LocaleException;
-use ProfanityFilter\Exceptions\MissingBlacklistFileException;
+use Devtrope\ProfanityFilter\Exceptions\InvalidBlacklistException;
+use Devtrope\ProfanityFilter\Exceptions\LocaleException;
+use Devtrope\ProfanityFilter\Exceptions\MissingBlacklistFileException;
 
 final class WordsList
 {

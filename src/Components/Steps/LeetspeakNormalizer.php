@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace ProfanityFilter\Components\Steps;
+namespace Devtrope\ProfanityFilter\Components\Steps;
 
-use ProfanityFilter\Components\Steps\Support\NormalizerStepInterface;
+use Devtrope\ProfanityFilter\Components\Steps\Support\NormalizerStepInterface;
 
 final class LeetspeakNormalizer implements NormalizerStepInterface
 {
