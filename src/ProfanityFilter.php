@@ -30,15 +30,15 @@ final class ProfanityFilter
     private const string DEFAULT_REPLACEMENT = '*';
 
     /**
-     * @param string $locale
+     * @param string|list<string> $locales
      * @throws LocaleException
      * @throws MissingBlacklistFileException
      * @throws InvalidBlacklistException
      */
-    public function __construct(private readonly string $locale = 'en')
+    public function __construct(private readonly string|array $locales = 'en')
     {
         $this->normalizer = Normalizer::default();
-        $words = new WordsList($this->locale);
+        $words = new WordsList($this->locales);
         foreach ($words->getAll() as $word) {
             $this->profanities[$this->normalizer->normalize($word)] = true;
         }

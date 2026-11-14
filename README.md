@@ -102,19 +102,21 @@ This behavior is intentional and keeps token indexing consistent across all supp
 
 ### Choose a language
 
-Pass a locale to the constructor. The default is `en`.
+Pass a locale to the constructor. The default is `en`. You can add multiple locales with an array if you want to handle multiple languages with one filter.
 
 ```php
 $filter = new ProfanityFilter('fr');
-
 $filter->clean('Quel connard'); // Quel *******
+
+$filter = new ProfanityFilter(['fr', 'en']);
+$filter->clean('Quel connard fuck'); // Quel ******* ****
 ```
 
 Available locales: `en`, `fr`, `es`, `de`, `it`, `pt`, `nl`.
 
-A `MissingBlacklistFileException` is thrown if no word list exists for the given locale, and an `InvalidBlacklistException` if a list is not valid JSON or is not a list of words.
+A `MissingBlacklistFileException` is thrown if no word list exists for one of the given locale, and an `InvalidBlacklistException` if a list is not valid JSON or is not a list of words.
 
-On a multilingual site, create one filter per language and reuse it, rather than mixing every language in one list: a harmless word in one language is sometimes a profanity in another.
+When using multiple locales, some false positives may appear so you have to be careful. For example `con` is a slur in french but not in spanish.
 
 ### Add or remove words
 

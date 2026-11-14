@@ -60,43 +60,43 @@ final class ProfanityFilterTest extends TestCase
     }
 
     #[DataProvider('partialProvider')]
-    public function testCleanWithPartialCensor(string $locale, string $input, string $expected): void
+    public function testCleanWithPartialCensor(string|array $locale, string $input, string $expected): void
     {
-        $filter = new ProfanityFilter(locale: $locale);
+        $filter = new ProfanityFilter(locales: $locale);
         $this->assertSame($expected, $filter->clean($input, partial: true));
     }
 
     #[DataProvider('localeProvider')]
-    public function testCleanWithLocale(string $locale, string $input, string $expected): void
+    public function testCleanWithLocale(string|array $locale, string $input, string $expected): void
     {
-        $filter = new ProfanityFilter(locale: $locale);
+        $filter = new ProfanityFilter(locales: $locale);
         $this->assertSame($expected, $filter->clean($input));
     }
 
     #[DataProvider('localeProvider')]
-    public function testContainsProfanityWithLocale(string $locale, string $input, string $expected): void
+    public function testContainsProfanityWithLocale(string|array $locale, string $input, string $expected): void
     {
-        $filter = new ProfanityFilter(locale: $locale);
+        $filter = new ProfanityFilter(locales: $locale);
         $this->assertSame($input !== $expected, $filter->containsProfanity($input));
     }
 
     public function testGetMatchesWithAccentedWord(): void
     {
-        $filter = new ProfanityFilter(locale: 'fr');
+        $filter = new ProfanityFilter(locales: 'fr');
         $this->assertEquals([new Detection('enculé', 'encule', 3)], $filter->getMatches('Tu es un enculé'));
     }
 
     public function testThrowsWhenLocaleDoesNotExist(): void
     {
         $this->expectException(MissingBlacklistFileException::class);
-        new ProfanityFilter(locale: 'pl');
+        new ProfanityFilter(locales: 'pl');
     }
 
     #[DataProvider('unsupportedLocaleProvider')]
     public function testThrowsWhenLocaleIsNotSupported(string $locale): void
     {
         $this->expectException(LocaleException::class);
-        new ProfanityFilter(locale: $locale);
+        new ProfanityFilter(locales: $locale);
     }
 
     #[DataProvider('addedWordsProvider')]
@@ -215,6 +215,7 @@ final class ProfanityFilterTest extends TestCase
         yield 'ponctuation dans le mot'           => ['fr', 'enculé!', 'e****é!'];
         yield 'ponctuation entourant le mot'      => ['fr', 'Je suis gentil (con)', 'Je suis gentil (c*n)'];
         yield 'ponctuations entourant le mot'     => ['fr', 'Je suis un .....enculé.....', 'Je suis un .....e****é.....'];
+        yield 'multiples locales'                 => [['fr', 'en'], 'Tu es une pute et une bitch', 'Tu es une p**e et une b***h'];
     }
 
     public static function localeProvider(): iterable
@@ -236,6 +237,7 @@ final class ProfanityFilterTest extends TestCase
         yield 'pt accent'                   => ['pt', 'seu otário', 'seu ******'];
         yield 'es cone'                     => ['es', 'cono', 'cono'];
         yield 'es insulte'                  => ['es', 'coño', '****'];
+        yield 'multiples locales'           => [['fr', 'en'], 'Tu es une pute et une bitch', 'Tu es une **** et une *****'];
     }
  
     public static function unsupportedLocaleProvider(): iterable
