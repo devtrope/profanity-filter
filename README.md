@@ -110,7 +110,7 @@ $filter = new ProfanityFilter('fr');
 $filter->clean('Quel connard'); // Quel *******
 ```
 
-Available locales: `en`, `fr`, `es`, `de`, `it`, `pt`.
+Available locales: `en`, `fr`, `es`, `de`, `it`, `pt`, `nl`.
 
 A `MissingBlacklistFileException` is thrown if no word list exists for the given locale, and an `InvalidBlacklistException` if a list is not valid JSON or is not a list of words.
 
